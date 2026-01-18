@@ -1,0 +1,21 @@
+form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	border: 3px solid crimson;
+
+	.address {
+		display: flex;
+		flex-direction: column;
+
+		.address-row {
+			display: flex;
+			gap: 5px;
+		}
+	}
+
+	.speed-row {
+		display: flex;
+		gap: 5px;
+	}
+}

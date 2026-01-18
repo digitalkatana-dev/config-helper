@@ -1,0 +1,46 @@
+.text-input {
+	width: 100%;
+	border-radius: 10px;
+	margin: 10px;
+	margin-top: 0;
+	align-self: center;
+
+	label,
+	textarea {
+		margin-left: 10px;
+		resize: none;
+	}
+
+	.input-container {
+		display: flex;
+		align-items: center;
+		border-radius: 10px;
+		border: 1px ridge;
+		padding: 5px;
+
+		input,
+		textarea {
+			width: 100%;
+			text-align: center;
+			padding: 5px;
+			outline: none;
+			border: none;
+			background-color: transparent;
+			color: var(--txt-primary);
+
+			&.edit-input {
+				color: inherit;
+			}
+		}
+
+		.hide {
+			color: grey;
+		}
+
+		&.video-url-input {
+			flex: 1;
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+		}
+	}
+}

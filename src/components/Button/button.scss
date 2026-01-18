@@ -1,0 +1,29 @@
+.btn {
+	padding: 10px 45px;
+	border-radius: 20px;
+	border: none;
+	background-color: var(--btn-background);
+	color: var(--home-txt);
+	font-weight: bold;
+	transition: all 0.4s;
+	cursor: pointer;
+
+	&.load-url-btn {
+		width: 275px !important;
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+	}
+
+	&.mic-btn {
+		background-color: green;
+		color: aliceblue;
+
+		&.muted {
+			background-color: crimson;
+		}
+	}
+
+	&:hover {
+		box-shadow: var(--elevation);
+	}
+}
