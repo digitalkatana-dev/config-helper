@@ -272,3 +272,77 @@ export const taggedOptions = [
 		value: false,
 	},
 ];
+
+export const handoffOptions = [
+	{
+		label: 'Copper',
+		value: 'copper',
+	},
+	{
+		label: 'Fiber',
+		value: 'fiber',
+	},
+];
+
+export const cidrOptions = [
+	{
+		label: '/30',
+		value: '/30',
+	},
+	{
+		label: '/29',
+		value: '/29',
+	},
+	{
+		label: '/28',
+		value: '/28',
+	},
+	{
+		label: '/27',
+		value: '/27',
+	},
+	{
+		label: '/26',
+		value: '/26',
+	},
+	{
+		label: '/25',
+		value: '/25',
+	},
+	{
+		label: '/24',
+		value: '/24',
+	},
+	{
+		label: '/23',
+		value: '/23',
+	},
+	{
+		label: '/22',
+		value: '/22',
+	},
+	{
+		label: '/21',
+		value: '/21',
+	},
+	{
+		label: '/20',
+		value: '/20',
+	},
+	{
+		label: '/19',
+		value: '/19',
+	},
+	{
+		label: '/18',
+		value: '/18',
+	},
+	{
+		label: '/17',
+		value: '/17',
+	},
+	{
+		label: '/16',
+		value: '/16',
+	},
+];

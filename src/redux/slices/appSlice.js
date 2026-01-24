@@ -12,7 +12,7 @@ export const getTimeZone = createAsyncThunk(
 	async (data, { rejectWithValue }) => {
 		try {
 			const locationRes = await axios.get(
-				`https://maps.googleapis.com/maps/api/geocode/json?address=${data}&key=${env.API_KEY}`
+				`https://maps.googleapis.com/maps/api/geocode/json?address=${data}&key=${env.API_KEY}`,
 			);
 			const location = locationRes?.data.results[0].geometry.location;
 			const { lat, lng } = location;
@@ -24,7 +24,7 @@ export const getTimeZone = createAsyncThunk(
 		} catch (err) {
 			return rejectWithValue(err.response.datat);
 		}
-	}
+	},
 );
 
 export const appAdapter = createEntityAdapter();
@@ -39,11 +39,18 @@ const initialState = appAdapter.getInitialState({
 	zipCode: '',
 	timeZone: '',
 	carrier: '',
+	handoffType: 'copper',
 	speed: '',
 	measurement: '',
 	entryType: '',
 	circuitType: '',
+	isTagged: 'false',
 	vlanId: '',
+	ipAddress_1: '',
+	ipAddress_2: '',
+	cidr_1: '',
+	cidr_2: '',
+	tpLink: 'false',
 	ipTemplate: null,
 	config: null,
 	appSuccess: null,
@@ -81,6 +88,9 @@ export const appSlice = createSlice({
 		setCarrier: (state, action) => {
 			state.carrier = action.payload;
 		},
+		setHandoffType: (state, action) => {
+			state.handoffType = action.payload;
+		},
 		setSpeed: (state, action) => {
 			state.speed = action.payload;
 		},
@@ -93,8 +103,49 @@ export const appSlice = createSlice({
 		setCircuitType: (state, action) => {
 			state.circuitType = action.payload;
 		},
+		setIsTagged: (state, action) => {
+			state.isTagged = action.payload;
+		},
 		setVlanId: (state, action) => {
 			state.vlanId = action.payload;
+		},
+		setIPAddress1: (state, action) => {
+			state.ipAddress_1 = action.payload;
+		},
+		setIPAddress2: (state, action) => {
+			state.ipAddress_2 = action.payload;
+		},
+		setCidr1: (state, action) => {
+			state.cidr_1 = action.payload;
+		},
+		setCidr2: (state, action) => {
+			state.cidr_2 = action.payload;
+		},
+		setTPLink: (state, action) => {
+			state.tpLink = action.payload;
+		},
+		clearForm: (state) => {
+			state.clientName = '';
+			state.address_1 = '';
+			state.address_2 = '';
+			state.city = '';
+			state.state = '';
+			state.zipCode = '';
+			state.timeZone = '';
+			state.carrier = '';
+			state.handoffType = 'copper';
+			state.speed = '';
+			state.measurement = '';
+			state.entryType = '';
+			state.circuitType = '';
+			state.isTagged = 'false';
+			state.vlanId = '';
+			state.ipAddress_1 = '';
+			state.ipAddress_2 = '';
+			state.cidr_1 = '';
+			state.cidr_2 = '';
+			state.tpLink = 'false';
+			state.cidr = undefined;
 		},
 		clearAppSuccess: (state) => {
 			state.appSuccess = null;
@@ -130,11 +181,19 @@ export const {
 	setZipCode,
 	setTimeZone,
 	setCarrier,
+	setHandoffType,
 	setSpeed,
 	setMeasurement,
 	setEntryType,
 	setCircuitType,
+	setIsTagged,
 	setVlanId,
+	setIPAddress1,
+	setIPAddress2,
+	setCidr1,
+	setCidr2,
+	setTPLink,
+	clearForm,
 	clearAppSuccess,
 	clearAppErrors,
 } = appSlice.actions;

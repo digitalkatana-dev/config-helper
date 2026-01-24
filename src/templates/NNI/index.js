@@ -6,3 +6,5 @@ export { default as RB5009noSwitch } from './RB5009noSwitch';
 export { default as RB5009switch } from './RB5009switch';
 export { default as RB5009taggedNoSwitch } from './RB5009taggedNoSwitch';
 export { default as RB5009taggedSwitch } from './RB5009taggedSwitch';
+export { default as RB5009SFPtaggedNoSwitch } from './RB5009SFPtaggedNoSwitch';
+export { default as RB5009SFPtaggedSwitch } from './RB5009SFPtaggedSwitch';

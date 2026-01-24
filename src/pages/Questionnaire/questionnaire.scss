@@ -14,8 +14,25 @@ form {
 		}
 	}
 
-	.speed-row {
+	.speed-row,
+	.carrier-row,
+	.cidr-row {
+		width: 100%;
 		display: flex;
 		gap: 5px;
+
+		.txt,
+		.radio {
+			width: 50%;
+		}
 	}
+
+	// .carrier-row {
+	// 	width: 80%;
+
+	// 	.radio {
+	// 		width: 50%;
+	// 		border: 2px solid red;
+	// 	}
+	// }
 }
