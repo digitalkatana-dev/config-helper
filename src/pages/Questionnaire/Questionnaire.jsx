@@ -24,7 +24,8 @@ import {
 	setTimeZone,
 	setCarrier,
 	setHandoffType,
-	setSpeed,
+	setSpeedUp,
+	setSpeedDn,
 	setMeasurement,
 	setEntryType,
 	setCircuitType,
@@ -34,11 +35,15 @@ import {
 	setIPAddress2,
 	setCidr1,
 	setCidr2,
+	setDNSp,
+	setDNSs,
 	setTPLink,
+	setIPTemplate,
 	clearForm,
 	// clearAppSuccess,
 	clearAppErrors,
 } from '../../redux/slices/appSlice';
+import { processIPs } from '../../util/helpers';
 import {
 	states,
 	speedMeasurements,
@@ -55,8 +60,6 @@ import Button from '../../components/Button';
 import './questionnaire.scss';
 
 const Questionnaire = () => {
-	// const [isTagged, setIsTagged] = useState(false);
-	// const [handoffType, setHandoffType] = useState('copper');
 	const {
 		clientName,
 		address_1,
@@ -67,7 +70,8 @@ const Questionnaire = () => {
 		timeZone,
 		carrier,
 		handoffType,
-		speed,
+		speedUp,
+		speedDn,
 		measurement,
 		entryType,
 		circuitType,
@@ -77,12 +81,30 @@ const Questionnaire = () => {
 		ipAddress_2,
 		cidr_1,
 		cidr_2,
+		dnsP,
+		dnsS,
 		tpLink,
 	} = useSelector((state) => state.app);
 	const dispatch = useDispatch();
 
 	const handleClear = () => {
 		dispatch(clearForm());
+	};
+
+	const handleIP = () => {
+		const data = {
+			circuitType,
+			...(cidr_1 && { slash1: cidr_1 }),
+			ipAddress1: ipAddress_1,
+			...(dnsP && { dnsP }),
+			...(dnsS && { dnsS }),
+			...(cidr_2 && { slash2: cidr_2 }),
+			...(ipAddress_2 && { ipAddress2: ipAddress_2 }),
+		};
+		// processIP('/29', '162.232.13.0');
+		processIPs(data);
+
+		dispatch(setIPTemplate(processIPs(data)));
 	};
 
 	const handleFocus = () => {
@@ -99,7 +121,8 @@ const Questionnaire = () => {
 			zip: setZipCode,
 			carrier: setCarrier,
 			handoff: setHandoffType,
-			speed: setSpeed,
+			up: setSpeedUp,
+			dn: setSpeedDn,
 			measure: setMeasurement,
 			entry: setEntryType,
 			circuit: setCircuitType,
@@ -109,6 +132,8 @@ const Questionnaire = () => {
 			ip2: setIPAddress2,
 			cidr1: setCidr1,
 			cidr2: setCidr2,
+			dns1: setDNSp,
+			dns2: setDNSs,
 			tp: setTPLink,
 		};
 
@@ -117,7 +142,7 @@ const Questionnaire = () => {
 		action && dispatch(action(value));
 	};
 
-	const handleClick = (e) => {
+	const handleSubmit = (e) => {
 		e.preventDefault();
 		dispatch(setTimeZone(''));
 	};
@@ -126,8 +151,8 @@ const Questionnaire = () => {
 		if (entryType !== 'auto') return null;
 		if (circuitType !== 'nni') return null;
 
-		const isTaggedBool = isTagged === 'true';
-		const tpLinkBool = tpLink === 'true';
+		const isTaggedBool = isTagged === 'yes';
+		const tpLinkBool = tpLink === 'yes';
 		const key = `${measurement}_${isTaggedBool}_${tpLinkBool}`;
 
 		const copperMap = {
@@ -169,7 +194,8 @@ const Questionnaire = () => {
 	return (
 		<Container>
 			<Button onClick={handleClear}>Clear</Button>
-			<form onSubmit={handleClick}>
+			<Button onClick={handleIP}>Handle IP</Button>
+			<form onSubmit={handleSubmit}>
 				<TextInput
 					placeholder='Client Name'
 					value={clientName}
@@ -232,10 +258,16 @@ const Questionnaire = () => {
 				</div>
 				<div className='speed-row'>
 					<TextInput
-						placeholder='Speed'
-						value={speed}
+						placeholder='Speed Up'
+						value={speedUp}
 						onFocus={handleFocus}
-						onChange={(e) => handleChange('speed', e.target.value)}
+						onChange={(e) => handleChange('up', e.target.value)}
+					/>
+					<TextInput
+						placeholder='Speed Down'
+						value={speedDn}
+						onFocus={handleFocus}
+						onChange={(e) => handleChange('dn', e.target.value)}
 					/>
 					<Select
 						fullWidth
@@ -268,7 +300,7 @@ const Questionnaire = () => {
 						options={taggedOptions}
 					/>
 				)}
-				{isTagged === 'true' && (
+				{isTagged === 'yes' && (
 					<TextInput
 						placeholder='VLAN'
 						value={vlanId}
@@ -276,39 +308,53 @@ const Questionnaire = () => {
 						onChange={(e) => handleChange('vlan', e.target.value)}
 					/>
 				)}
+				<div className='cidr-row'>
+					<TextInput
+						placeholder='IP Address 1'
+						value={ipAddress_1}
+						onFocus={handleFocus}
+						onChange={(e) => handleChange('ip1', e.target.value)}
+					/>
+					<Select
+						// fullWidth
+						label='Subnet'
+						options={cidrOptions}
+						value={cidr_1}
+						onChange={(e) => handleChange('cidr1', e.target.value)}
+					/>
+				</div>
+				{circuitType === 'dia' && (
+					<div className='dns-row'>
+						<TextInput
+							placeholder='Primary DNS'
+							value={dnsP}
+							onFocus={handleFocus}
+							onChange={(e) => handleChange('dns1', e.target.value)}
+						/>
+						<TextInput
+							placeholder='Secondary DNS'
+							value={dnsS}
+							onFocus={handleFocus}
+							onChange={(e) => handleChange('dns2', e.target.value)}
+						/>
+					</div>
+				)}
 				{circuitType === 'nni' && (
-					<>
-						<div className='cidr-row'>
-							<TextInput
-								placeholder='IP Address 1'
-								value={ipAddress_1}
-								onFocus={handleFocus}
-								onChange={(e) => handleChange('ip1', e.target.value)}
-							/>
-							<Select
-								// fullWidth
-								label='Subnet'
-								options={cidrOptions}
-								value={cidr_1}
-								onChange={(e) => handleChange('cidr1', e.target.value)}
-							/>
-						</div>
-						<div className='cidr-row'>
-							<TextInput
-								placeholder='IP Address 2'
-								value={ipAddress_2}
-								onFocus={handleFocus}
-								onChange={(e) => handleChange('ip2', e.target.value)}
-							/>
-							<Select
-								// fullWidth
-								label='Subnet'
-								options={cidrOptions}
-								value={cidr_2}
-								onChange={(e) => handleChange('cidr2', e.target.value)}
-							/>
-						</div>
-					</>
+					<div className='cidr-row'>
+						<TextInput
+							placeholder='IP Address 2'
+							value={ipAddress_2}
+							onFocus={handleFocus}
+							onChange={(e) => handleChange('ip2', e.target.value)}
+						/>
+						<Select
+							// fullWidth
+							label='Subnet'
+							options={cidrOptions}
+							value={cidr_2}
+							onChange={(e) => handleChange('cidr2', e.target.value)}
+						/>
+					</div>
 				)}
 				<RadioGroup
 					row

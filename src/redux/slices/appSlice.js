@@ -40,17 +40,20 @@ const initialState = appAdapter.getInitialState({
 	timeZone: '',
 	carrier: '',
 	handoffType: 'copper',
-	speed: '',
+	speedUp: '',
+	speedDn: '',
 	measurement: '',
 	entryType: '',
 	circuitType: '',
-	isTagged: 'false',
+	isTagged: 'no',
 	vlanId: '',
 	ipAddress_1: '',
 	ipAddress_2: '',
 	cidr_1: '',
 	cidr_2: '',
-	tpLink: 'false',
+	dnsP: '',
+	dnsS: '',
+	tpLink: 'no',
 	ipTemplate: null,
 	config: null,
 	appSuccess: null,
@@ -91,8 +94,11 @@ export const appSlice = createSlice({
 		setHandoffType: (state, action) => {
 			state.handoffType = action.payload;
 		},
-		setSpeed: (state, action) => {
-			state.speed = action.payload;
+		setSpeedUp: (state, action) => {
+			state.speedUp = action.payload;
+		},
+		setSpeedDn: (state, action) => {
+			state.speedDn = action.payload;
 		},
 		setMeasurement: (state, action) => {
 			state.measurement = action.payload;
@@ -102,6 +108,9 @@ export const appSlice = createSlice({
 		},
 		setCircuitType: (state, action) => {
 			state.circuitType = action.payload;
+			if (action.payload === 'nni') {
+				state.cidr_1 = '/30';
+			}
 		},
 		setIsTagged: (state, action) => {
 			state.isTagged = action.payload;
@@ -121,8 +130,17 @@ export const appSlice = createSlice({
 		setCidr2: (state, action) => {
 			state.cidr_2 = action.payload;
 		},
+		setDNSp: (state, action) => {
+			state.dnsP = action.payload;
+		},
+		setDNSs: (state, action) => {
+			state.dnsS = action.payload;
+		},
 		setTPLink: (state, action) => {
 			state.tpLink = action.payload;
+		},
+		setIPTemplate: (state, action) => {
+			state.ipTemplate = action.payload;
 		},
 		clearForm: (state) => {
 			state.clientName = '';
@@ -134,18 +152,21 @@ export const appSlice = createSlice({
 			state.timeZone = '';
 			state.carrier = '';
 			state.handoffType = 'copper';
-			state.speed = '';
+			state.speedUp = '';
+			state.speedDn = '';
 			state.measurement = '';
 			state.entryType = '';
 			state.circuitType = '';
-			state.isTagged = 'false';
+			state.isTagged = 'no';
 			state.vlanId = '';
 			state.ipAddress_1 = '';
 			state.ipAddress_2 = '';
 			state.cidr_1 = '';
 			state.cidr_2 = '';
-			state.tpLink = 'false';
-			state.cidr = undefined;
+			state.dnsP = '';
+			state.dnsS = '';
+			state.tpLink = 'no';
+			state.ipTemplate = null;
 		},
 		clearAppSuccess: (state) => {
 			state.appSuccess = null;
@@ -182,7 +203,8 @@ export const {
 	setTimeZone,
 	setCarrier,
 	setHandoffType,
-	setSpeed,
+	setSpeedUp,
+	setSpeedDn,
 	setMeasurement,
 	setEntryType,
 	setCircuitType,
@@ -192,7 +214,10 @@ export const {
 	setIPAddress2,
 	setCidr1,
 	setCidr2,
+	setDNSp,
+	setDNSs,
 	setTPLink,
+	setIPTemplate,
 	clearForm,
 	clearAppSuccess,
 	clearAppErrors,

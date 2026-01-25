@@ -1,10 +1,17 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import {
+	processInterfaceName,
+	processClientLocation,
+	processCircuitName,
+} from '../../util/helpers';
 
 const RB5009taggedNoSwitch = () => {
 	const {
+		clientName,
 		carrier,
-		speed,
+		speedUp,
+		speedDn,
 		measurement,
 		vlanId,
 		cidr_1,
@@ -15,21 +22,46 @@ const RB5009taggedNoSwitch = () => {
 		state,
 		zipCode,
 		timeZone,
+		ipTemplate,
 	} = useSelector((state) => state.app);
 
-	let wanip = 4;
-	let lanip = 6;
-	const ether1 = `${carrier}_ASE_${speed}${measurement}`;
-	const wan = `${wanip}${cidr_1}`;
-	const lan = `${lanip}${cidr_2}`;
-	const maxSpeed = `${speed}${measurement}/${speed}${measurement}`;
-	const shaping = `${speed}${measurement}`;
-	const wanNet = 'wan net';
-	const lanNet = 'lan net';
-	const core = 'core';
-	const location = `${address_1}${
-		address_2 ? '_' + address_2 : ''
-	}_${city}_${state}_${zipCode}`;
+	const wan = `${ipTemplate?.verveRouterWan}${cidr_1}`;
+	const lan = `${ipTemplate?.clientGateway}${cidr_2}`;
+	const maxSpeed = `${speedUp}${measurement}/${speedDn}${measurement}`;
+	const shaping = `${speedDn}${measurement}`;
+
+	const ether1Name = () => {
+		const data = {
+			carrier,
+			speedDn,
+			measurement,
+		};
+
+		return processInterfaceName(data);
+	};
+
+	const clientLocation = () => {
+		const data = {
+			address_1,
+			...(address_2 && { address_2 }),
+			city,
+			state,
+			zipCode,
+		};
+
+		return processClientLocation(data);
+	};
+
+	const circuitName = () => {
+		const data = {
+			clientName,
+			city,
+			speedDn,
+			measurement,
+		};
+
+		return processCircuitName(data);
+	};
 
 	return (
 		<div style={{ textAlign: 'left', padding: '0 30%' }}>
@@ -37,7 +69,7 @@ const RB5009taggedNoSwitch = () => {
 			<p>add name=Voice_Bridge</p>
 			<p>/interface vlan</p>
 			<p>
-				add interface=ether1 name={ether1} vlan-id=
+				add interface=ether1 name={ether1Name()} vlan-id=
 				{vlanId}
 			</p>
 			<p>/ip pool</p>
@@ -61,13 +93,14 @@ const RB5009taggedNoSwitch = () => {
 			<p>add bridge=Voice_Bridge interface=ether7</p>
 			<p>/ip address</p>
 			<p>
-				add address={wan} interface={ether1} network={wanNet}
+				add address={wan} interface={ether1Name()} network=
+				{ipTemplate?.wanNetwork}
 			</p>
 			<p>
 				add address=192.168.25.1/24 interface=Voice_Bridge network=192.168.25.0
 			</p>
 			<p>
-				add address={lan} interface=ether2 network={lanNet}
+				add address={lan} interface=ether2 network={ipTemplate?.lanNetwork}
 			</p>
 			<p>/ip dhcp-server network</p>
 			<p>
@@ -94,13 +127,13 @@ const RB5009taggedNoSwitch = () => {
 			<p>add action=accept chain=input dst-port=161 protocol=udp</p>
 			<p>add action=accept chain=input dst-port=2222 protocol=tcp</p>
 			<p>add action=accept chain=input dst-port=22 protocol=tcp</p>
-			<p>add action=drop chain=input in-interface={ether1}</p>
+			<p>add action=drop chain=input in-interface={ether1Name()}</p>
 			<p>/ip firewall nat</p>
 			<p>add action=masquerade chain=srcnat disabled=yes</p>
 			<p>add action=masquerade chain=srcnat src-address=192.168.25.0/24</p>
 			<p>
-				add action=dst-nat chain=dstnat dst-port=2222 in-interface={ether1}{' '}
-				log=yes \
+				add action=dst-nat chain=dstnat dst-port=2222 in-interface=
+				{ether1Name()} log=yes \
 			</p>
 			<p>port="" protocol=tcp to-addresses=192.168.25.2 to-ports=22</p>
 			<p>/ip firewall service-port</p>
@@ -114,10 +147,10 @@ const RB5009taggedNoSwitch = () => {
 			<p>set dccp disabled=yes</p>
 			<p>set sctp disabled=yes</p>
 			<p>/ip route</p>
-			<p>add distance=1 gateway={core}</p>
+			<p>add distance=1 gateway={ipTemplate?.coreVerveGateway}</p>
 			<p>/queue simple</p>
 			<p>
-				add max-limit={maxSpeed} name=Shaping-{shaping} target={ether1}{' '}
+				add max-limit={maxSpeed} name=Shaping-{shaping} target={ether1Name()}{' '}
 				dst=0.0.0.0/0
 			</p>
 			<p>/ip service</p>
@@ -139,7 +172,7 @@ const RB5009taggedNoSwitch = () => {
 			<p>set api-ssl disabled=yes</p>
 			<p>/snmp</p>
 			<p>set contact=support@nextlevelinternet.com enabled=yes location=\</p>
-			<p>"{location}" trap-generators=\</p>
+			<p>"{clientLocation()}" trap-generators=\</p>
 			<p>
 				interfaces trap-interfaces=ether1 trap-target=207.7.100.77
 				trap-version=2
@@ -147,10 +180,7 @@ const RB5009taggedNoSwitch = () => {
 			<p>/system clock</p>
 			<p>set time-zone-name={timeZone}</p>
 			<p>/system identity</p>
-			<p>
-				set name=[[[[Circuit Name in HOMIR (Caps for first letter, no spaces or
-				special characters - ex:Luna_Grill_LG25_Ventura_50M]]]]
-			</p>
+			<p>set name={circuitName()}</p>
 			<p>/system logging</p>
 			<p>set 2 action=echo</p>
 			<p>add action=echo topics=interface</p>

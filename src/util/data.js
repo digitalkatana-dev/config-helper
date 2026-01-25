@@ -265,11 +265,11 @@ export const circuitTypes = [
 export const taggedOptions = [
 	{
 		label: 'Yes',
-		value: true,
+		value: 'yes',
 	},
 	{
 		label: 'No',
-		value: false,
+		value: 'no',
 	},
 ];
 
