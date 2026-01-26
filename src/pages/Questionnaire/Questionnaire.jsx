@@ -1,18 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { Container } from '@mui/material';
-import {
-	RB5009noSwitch,
-	RB5009switch,
-	RB5009taggedNoSwitch,
-	RB5009taggedSwitch,
-	RB5009SFPtaggedNoSwitch,
-	RB5009SFPtaggedSwitch,
-	CCRnoSwitch,
-	CCRswitch,
-	CCRtaggedNoSwitch,
-	CCRtaggedSwitch,
-} from '../../templates/NNI';
 import {
 	setClientName,
 	setAddress1,
@@ -86,6 +75,7 @@ const Questionnaire = () => {
 		tpLink,
 	} = useSelector((state) => state.app);
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	const handleClear = () => {
 		dispatch(clearForm());
@@ -101,8 +91,6 @@ const Questionnaire = () => {
 			...(cidr_2 && { slash2: cidr_2 }),
 			...(ipAddress_2 && { ipAddress2: ipAddress_2 }),
 		};
-		// processIP('/29', '162.232.13.0');
-		processIPs(data);
 
 		dispatch(setIPTemplate(processIPs(data)));
 	};
@@ -145,42 +133,6 @@ const Questionnaire = () => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		dispatch(setTimeZone(''));
-	};
-
-	const configViews = () => {
-		if (entryType !== 'auto') return null;
-		if (circuitType !== 'nni') return null;
-
-		const isTaggedBool = isTagged === 'yes';
-		const tpLinkBool = tpLink === 'yes';
-		const key = `${measurement}_${isTaggedBool}_${tpLinkBool}`;
-
-		const copperMap = {
-			M_false_false: <RB5009noSwitch />,
-			M_false_true: <RB5009switch />,
-			M_true_false: <RB5009taggedNoSwitch />,
-			M_true_true: <RB5009taggedSwitch />,
-
-			G_false_false: <CCRnoSwitch />,
-			G_false_true: <CCRswitch />,
-			G_true_false: <CCRtaggedNoSwitch />,
-			G_true_true: <CCRtaggedSwitch />,
-		};
-
-		const fiberMap = {
-			M_false_false: <RB5009SFPtaggedNoSwitch />,
-			M_false_true: <RB5009SFPtaggedSwitch />,
-		};
-
-		if (handoffType === 'copper') {
-			return copperMap[key] ?? null;
-		}
-
-		if (handoffType === 'fiber') {
-			return fiberMap[key] ?? null;
-		}
-
-		return null;
 	};
 
 	const handleTimeZone = useCallback(() => {
@@ -316,7 +268,6 @@ const Questionnaire = () => {
 						onChange={(e) => handleChange('ip1', e.target.value)}
 					/>
 					<Select
-						// fullWidth
 						label='Subnet'
 						options={cidrOptions}
 						value={cidr_1}
@@ -348,7 +299,6 @@ const Questionnaire = () => {
 							onChange={(e) => handleChange('ip2', e.target.value)}
 						/>
 						<Select
-							// fullWidth
 							label='Subnet'
 							options={cidrOptions}
 							value={cidr_2}
@@ -365,7 +315,6 @@ const Questionnaire = () => {
 				/>
 				<Button type='submit'>Submit</Button>
 			</form>
-			{configViews()}
 		</Container>
 	);
 };

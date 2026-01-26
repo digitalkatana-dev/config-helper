@@ -1,0 +1,15 @@
+.template {
+	text-align: left;
+
+	h2 {
+		text-align: center;
+	}
+
+	.config-details {
+		white-space: pre-line;
+
+		.user-entry {
+			color: crimson;
+		}
+	}
+}
