@@ -4,23 +4,15 @@ import {
 	createSlice,
 } from '@reduxjs/toolkit';
 import axios from 'axios';
-import env from 'react-dotenv';
-import tzlookup from 'tz-lookup';
 
 export const getTimeZone = createAsyncThunk(
 	'app/get_time_zone',
 	async (data, { rejectWithValue }) => {
 		try {
-			const locationRes = await axios.get(
-				`https://maps.googleapis.com/maps/api/geocode/json?address=${data}&key=${env.API_KEY}`,
+			const res = await axios.get(
+				`https://tools-backend-7x55.onrender.com/time-zone/${data}`,
 			);
-			const location = locationRes?.data.results[0].geometry.location;
-			const { lat, lng } = location;
-			let timeZone;
-			if (lat && lng) {
-				timeZone = tzlookup(lat, lng);
-			}
-			return timeZone;
+			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.datat);
 		}
