@@ -132,7 +132,8 @@ const Questionnaire = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		dispatch(setTimeZone(''));
+		navigate('/config-result');
+		// dispatch(setTimeZone(''));
 	};
 
 	const handleTimeZone = useCallback(() => {
@@ -144,9 +145,9 @@ const Questionnaire = () => {
 	}, [handleTimeZone]);
 
 	return (
-		<Container>
-			<Button onClick={handleClear}>Clear</Button>
-			<Button onClick={handleIP}>Handle IP</Button>
+		<Container className='q-container'>
+			{/* <Button onClick={handleClear}>Clear</Button>
+			<Button onClick={handleIP}>Handle IP</Button> */}
 			<form onSubmit={handleSubmit}>
 				<TextInput
 					placeholder='Client Name'
@@ -231,34 +232,33 @@ const Questionnaire = () => {
 				</div>
 				<Select
 					fullWidth
-					label='Entry Type'
-					options={entryTypes}
-					value={entryType}
-					onChange={(e) => handleChange('entry', e.target.value)}
-				/>
-				<Select
-					fullWidth
 					label='Circuit Type'
 					options={circuitTypes}
 					value={circuitType}
 					onChange={(e) => handleChange('circuit', e.target.value)}
 				/>
 				{circuitType === 'nni' && (
-					<RadioGroup
-						row
-						label='Tagged?'
-						value={isTagged}
-						onChange={(e) => handleChange('tag', e.target.value)}
-						options={taggedOptions}
-					/>
-				)}
-				{isTagged === 'yes' && (
-					<TextInput
-						placeholder='VLAN'
-						value={vlanId}
-						onFocus={handleFocus}
-						onChange={(e) => handleChange('vlan', e.target.value)}
-					/>
+					<div className='q-row'>
+						<div className='radio'>
+							<RadioGroup
+								row
+								label='Tagged?'
+								value={isTagged}
+								onChange={(e) => handleChange('tag', e.target.value)}
+								options={taggedOptions}
+							/>
+						</div>
+						{isTagged === 'yes' && (
+							<div className='txt'>
+								<TextInput
+									placeholder='VLAN'
+									value={vlanId}
+									onFocus={handleFocus}
+									onChange={(e) => handleChange('vlan', e.target.value)}
+								/>
+							</div>
+						)}
+					</div>
 				)}
 				<div className='cidr-row'>
 					<TextInput
@@ -268,6 +268,7 @@ const Questionnaire = () => {
 						onChange={(e) => handleChange('ip1', e.target.value)}
 					/>
 					<Select
+						style={{ width: '30%' }}
 						label='Subnet'
 						options={cidrOptions}
 						value={cidr_1}
@@ -299,6 +300,7 @@ const Questionnaire = () => {
 							onChange={(e) => handleChange('ip2', e.target.value)}
 						/>
 						<Select
+							style={{ width: '30%' }}
 							label='Subnet'
 							options={cidrOptions}
 							value={cidr_2}
@@ -312,6 +314,13 @@ const Questionnaire = () => {
 					value={tpLink}
 					onChange={(e) => handleChange('tp', e.target.value)}
 					options={taggedOptions}
+				/>
+				<Select
+					fullWidth
+					label='Entry Type'
+					options={entryTypes}
+					value={entryType}
+					onChange={(e) => handleChange('entry', e.target.value)}
 				/>
 				<Button type='submit'>Submit</Button>
 			</form>

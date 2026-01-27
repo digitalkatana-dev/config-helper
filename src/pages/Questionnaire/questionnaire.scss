@@ -1,39 +1,51 @@
-form {
+.q-container {
+	height: calc(100vh - 64px);
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	border: 3px solid crimson;
 
-	.address {
+	form {
+		width: 50%;
 		display: flex;
 		flex-direction: column;
+		align-items: center;
+		padding: 20px;
+		margin: auto;
+		border: 3px ridge crimson;
 
-		.address-row {
+		.address {
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+
+			.address-row {
+				display: flex;
+				gap: 5px;
+			}
+		}
+
+		.q-row,
+		.speed-row,
+		.carrier-row,
+		.cidr-row,
+		.dns-row {
+			width: 100%;
 			display: flex;
 			gap: 5px;
+			justify-content: center;
+
+			.txt,
+			.radio {
+				width: 50%;
+			}
 		}
+
+		// .carrier-row {
+		// 	width: 80%;
+
+		// 	.radio {
+		// 		width: 50%;
+		// 		border: 2px solid red;
+		// 	}
+		// }
 	}
-
-	.speed-row,
-	.carrier-row,
-	.cidr-row,
-	.dns-row {
-		width: 100%;
-		display: flex;
-		gap: 5px;
-
-		.txt,
-		.radio {
-			width: 50%;
-		}
-	}
-
-	// .carrier-row {
-	// 	width: 80%;
-
-	// 	.radio {
-	// 		width: 50%;
-	// 		border: 2px solid red;
-	// 	}
-	// }
 }

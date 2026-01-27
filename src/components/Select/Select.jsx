@@ -9,6 +9,7 @@ import './select.scss';
 
 const Select = ({
 	id,
+	style,
 	fullWidth,
 	autoWidth,
 	label,
@@ -17,7 +18,7 @@ const Select = ({
 	options,
 }) => {
 	return (
-		<FormControl fullWidth={fullWidth} size='small'>
+		<FormControl style={style} fullWidth={fullWidth} size='small'>
 			<InputLabel id={label?.toLowerCase()}>{label}</InputLabel>
 			<MuiSelect
 				className='muiselect'

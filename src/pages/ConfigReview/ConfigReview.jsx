@@ -15,6 +15,7 @@ import {
 	Mkt5009RoutedVDHCPVBTPF,
 	MktCCRRoutedLB,
 	MktCCRRoutedVDHCPVB,
+	NoMatch,
 } from './templates';
 import './config.scss';
 
@@ -63,7 +64,9 @@ const ConfigReview = () => {
 		};
 
 		return (
-			views?.[circuitType]?.[handoffType]?.[keyByCircuit[circuitType]] ?? null
+			views?.[circuitType]?.[handoffType]?.[keyByCircuit[circuitType]] ?? (
+				<NoMatch />
+			)
 		);
 	};
 
