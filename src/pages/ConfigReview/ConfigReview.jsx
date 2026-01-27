@@ -1,5 +1,6 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
 	Mkt5009BridgedPrivate,
 	Mkt5009BridgedPrivateTP,
@@ -17,11 +18,24 @@ import {
 	MktCCRRoutedVDHCPVB,
 	NoMatch,
 } from './templates';
+import { clearForm } from '../../redux/slices/appSlice';
+import Button from '../../components/Button';
 import './config.scss';
 
 const ConfigReview = () => {
 	const { handoffType, circuitType, entryType, measurement, isTagged, tpLink } =
 		useSelector((state) => state.app);
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+
+	const handleBack = () => {
+		navigate('/');
+	};
+
+	const handleClear = () => {
+		dispatch(clearForm());
+		navigate('/');
+	};
 
 	const configViews = () => {
 		const isTaggedBool = isTagged === 'yes';
@@ -70,7 +84,13 @@ const ConfigReview = () => {
 		);
 	};
 
-	return <div id='config-review'>{configViews()}</div>;
+	return (
+		<div id='config-review'>
+			{configViews()}
+			<Button onClick={handleBack}>Go Back</Button>
+			<Button onClick={handleClear}>Restart</Button>
+		</div>
+	);
 };
 
 export default ConfigReview;

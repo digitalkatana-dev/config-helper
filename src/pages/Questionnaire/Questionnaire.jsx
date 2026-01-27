@@ -10,7 +10,6 @@ import {
 	setState,
 	setZipCode,
 	getTimeZone,
-	setTimeZone,
 	setCarrier,
 	setHandoffType,
 	setSpeedUp,
@@ -28,8 +27,6 @@ import {
 	setDNSs,
 	setTPLink,
 	setIPTemplate,
-	clearForm,
-	// clearAppSuccess,
 	clearAppErrors,
 } from '../../redux/slices/appSlice';
 import { processIPs } from '../../util/helpers';
@@ -76,10 +73,6 @@ const Questionnaire = () => {
 	} = useSelector((state) => state.app);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-
-	const handleClear = () => {
-		dispatch(clearForm());
-	};
 
 	const handleIP = () => {
 		const data = {
@@ -132,8 +125,8 @@ const Questionnaire = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		handleIP();
 		navigate('/config-result');
-		// dispatch(setTimeZone(''));
 	};
 
 	const handleTimeZone = useCallback(() => {
@@ -146,8 +139,6 @@ const Questionnaire = () => {
 
 	return (
 		<Container className='q-container'>
-			{/* <Button onClick={handleClear}>Clear</Button>
-			<Button onClick={handleIP}>Handle IP</Button> */}
 			<form onSubmit={handleSubmit}>
 				<TextInput
 					placeholder='Client Name'
