@@ -21,7 +21,7 @@ export const processIPs = (data) => {
 	};
 
 	const parseIP = (ip) => {
-		const [a, b, c, d] = ip.split('.').map(Number);
+		const [a, b, c, d] = ip?.split('.').map(Number);
 		return {
 			base: `${a}.${b}.${c}.`,
 			last: d,
@@ -29,7 +29,7 @@ export const processIPs = (data) => {
 	};
 
 	const usableHosts = (slash) =>
-		Math.pow(2, 32 - Number(slash.replace('/', ''))) - 2;
+		Math.pow(2, 32 - Number(slash?.replace('/', ''))) - 2;
 
 	const buildRange = (base, start, end) => `${base}${start} - ${base}${end}`;
 
@@ -85,7 +85,7 @@ export const processInterfaceName = (data) => {
 
 	const nameString = `${carrier} ${speedDn}${measurement}`;
 
-	const interfaceName = nameString.replaceAll(' ', '_');
+	const interfaceName = nameString?.replaceAll(' ', '_');
 
 	return interfaceName;
 };
@@ -105,7 +105,7 @@ export const processCircuitName = (data) => {
 
 	const nameString = `${clientName} ${city} ${speedDn}${measurement}`;
 
-	const circuitName = nameString.replaceAll(' ', '_');
+	const circuitName = nameString?.replaceAll(' ', '_');
 
 	return circuitName;
 };
