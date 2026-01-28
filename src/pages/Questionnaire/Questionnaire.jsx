@@ -125,7 +125,7 @@ const Questionnaire = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		handleIP();
+		ipAddress_1 && handleIP();
 		navigate('/config-result');
 	};
 
