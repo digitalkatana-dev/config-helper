@@ -69,15 +69,25 @@ add bridge=WAN_Bridge interface=sfp-sfpplus3
 set detect-interface-list=all
 /ip address
 add address=192.168.25.1/24 interface=sfp-sfpplus4 network=192.168.25.0
-add address=[[[[[CHANGE WAN IP ADDRESS]][[/NOTATION for SUBNET ex:/30]]]] interface=WAN_Bridge network=[[[[[WAN NETWORK ID IP ADDRESS]]]]
+add address=`}
+					<span className='user-entry'>{wan}</span>
+					{` interface=WAN_Bridge network=`}
+					<span className='user-entry'>{ipTemplate?.network}</span>
+					{`
 /ip dhcp-server network
-add address=192.168.25.0/24 dhcp-option=Option160 dns-server=[[[[[PRIMARY DNS]]]],[[[[[SECONDARY DNS]]]],8.8.4.4 \
-    gateway=192.168.25.1
+add address=192.168.25.0/24 dhcp-option=Option160 dns-server=`}
+					<span className='user-entry'>{ipTemplate?.dnsP}</span>
+					{`,`}
+					<span className='user-entry'>{ipTemplate?.dnsS}</span>
+					{`,8.8.4.4 gateway=192.168.25.1
 /ip dns
-set allow-remote-requests=no servers=[[[[[PRIMARY DNS]]]]],[[[[[SECONDARY DNS]]]],8.8.8.8
+set allow-remote-requests=no servers=`}
+					<span className='user-entry'>{ipTemplate?.dnsP}</span>
+					{`,`}
+					<span className='user-entry'>{ipTemplate?.dnsS}</span>
+					{`,8.8.8.8
 /ip firewall filter
-add action=drop chain=forward comment="Drop to bogon list" dst-address-list=\
-    Bogons
+add action=drop chain=forward comment="Drop to bogon list" dst-address-list=Bogons
 add action=accept chain=forward protocol=icmp
 add action=accept chain=input protocol=icmp
 add action=accept chain=input connection-state=established
@@ -102,24 +112,29 @@ set udplite disabled=yes
 set dccp disabled=yes
 set sctp disabled=yes
 /ip route
-add distance=1 gateway=[[[[[WAN GATEWAY IP ADDRESS]]
+add distance=1 gateway=`}
+					<span className='user-entry'>{ipTemplate?.gateway}</span>
+					{`
 /ip service
 set telnet disabled=yes
 set ftp disabled=yes
 set www disabled=yes
 set ssh address=66.171.144.0/20,66.185.160.0/20,207.7.96.0/19,68.101.245.246/32,104.51.34.250/32,76.248.46.80/29,47.157.175.189/32,63.247.145.30/32,71.208.138.15/32
 set api disabled=yes
-set winbox address="66.171.144.0/20,66.185.160.0/20,207.7.96.0/19,192.168.25.0\
-    /24,68.101.245.246/32,47.157.175.189/32,63.247.145.30/32,71.208.138.15/32"
+set winbox address="66.171.144.0/20,66.185.160.0/20,207.7.96.0/19,192.168.25.0/24,68.101.245.246/32,47.157.175.189/32,63.247.145.30/32,71.208.138.15/32"
 set api-ssl disabled=yes
 /snmp
-set contact=support@nextlevelinternet.com enabled=yes location=\
-    "[[[[[CLIENT ADDRESS]]]]]]" \
-    trap-generators=interfaces trap-target=207.7.100.77 trap-version=2
+set contact=support@nextlevelinternet.com enabled=yes location="`}
+					<span className='user-entry'>{clientLocation()}</span>
+					{`" trap-generators=interfaces trap-target=207.7.100.77 trap-version=2
 /system clock
-set time-zone-name=[[[[[America/Los_Angeles, America/Denver, America/Chicago, or America/New_York]]]]]
+set time-zone-name=`}
+					<span className='user-entry'>{timeZone}</span>
+					{`
 /system identity
-set name=[[[[[Circuit Name in HOMIR (Caps for first letter, no spaces or special characters - ex:Luna_Grill_LG25_Ventura_50M]]]]]]
+set name=`}
+					<span className='user-entry'>{circuitName()}</span>
+					{`
 /system logging
 set 2 action=echo
 add action=echo topics=interface

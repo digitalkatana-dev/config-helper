@@ -10,7 +10,7 @@ export const getTimeZone = createAsyncThunk(
 	async (data, { rejectWithValue }) => {
 		try {
 			const res = await axios.get(
-				`https://tools-backend-7x55.onrender.com/time-zone/${data}`,
+				`https://tools-backend-7x55.onrender.com/config/timezone/${data}`,
 			);
 			return res.data;
 		} catch (err) {

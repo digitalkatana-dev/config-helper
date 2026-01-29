@@ -10,6 +10,7 @@ import {
 	setState,
 	setZipCode,
 	getTimeZone,
+	setTimeZone,
 	setCarrier,
 	setHandoffType,
 	setSpeedUp,
@@ -130,8 +131,8 @@ const Questionnaire = () => {
 	};
 
 	const handleTimeZone = useCallback(() => {
-		if (!timeZone && zipCode?.length === 5) dispatch(getTimeZone(zipCode));
-	}, [dispatch, timeZone, zipCode]);
+		dispatch(zipCode?.length === 5 ? getTimeZone(zipCode) : setTimeZone(''));
+	}, [dispatch, zipCode]);
 
 	useEffect(() => {
 		handleTimeZone();

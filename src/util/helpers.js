@@ -109,3 +109,16 @@ export const processCircuitName = (data) => {
 
 	return circuitName;
 };
+
+export const processCircuitSpeed = (data) => {
+	const { speedUp, speedDn, measurement } = data;
+
+	let maxLimit;
+	if (speedUp) {
+		maxLimit = `${speedUp + measurement}/${speedDn + measurement}`;
+	} else {
+		maxLimit = `${speedDn + measurement}/${speedDn + measurement}`;
+	}
+
+	return maxLimit;
+};
