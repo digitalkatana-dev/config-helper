@@ -8,6 +8,7 @@ import '../template.scss';
 
 const Mkt5009BridgedPrivate = () => {
 	const {
+		theme,
 		clientName,
 		speedDn,
 		measurement,
@@ -76,21 +77,33 @@ set detect-interface-list=all
 /ip address
 add address=192.168.25.1/24 interface=Voice_Bridge network=192.168.25.0
 add address=`}
-					<span className='user-entry'>{wan}</span>
+					<span className={theme === 'dark' ? 'user-entry dark' : 'user-entry'}>
+						{wan}
+					</span>
 					{` interface=WAN_Bridge network=`}
-					<span className='user-entry'>{ipTemplate?.network}</span>
+					<span className={theme === 'dark' ? 'user-entry dark' : 'user-entry'}>
+						{ipTemplate?.network}
+					</span>
 					{`
 /ip dhcp-server network
 add address=192.168.25.0/24 dhcp-option=Option160 dns-server=`}
-					<span className='user-entry'>{ipTemplate?.dnsP}</span>
+					<span className={theme === 'dark' ? 'user-entry dark' : 'user-entry'}>
+						{ipTemplate?.dnsP}
+					</span>
 					{`,`}
-					<span className='user-entry'>{ipTemplate?.dnsS}</span>
+					<span className={theme === 'dark' ? 'user-entry dark' : 'user-entry'}>
+						{ipTemplate?.dnsS}
+					</span>
 					{`,8.8.4.4 gateway=192.168.25.1
 /ip dns
 set allow-remote-requests=no servers=`}
-					<span className='user-entry'>{ipTemplate?.dnsP}</span>
+					<span className={theme === 'dark' ? 'user-entry dark' : 'user-entry'}>
+						{ipTemplate?.dnsP}
+					</span>
 					{`,`}
-					<span className='user-entry'>{ipTemplate?.dnsS}</span>
+					<span className={theme === 'dark' ? 'user-entry dark' : 'user-entry'}>
+						{ipTemplate?.dnsS}
+					</span>
 					{`,8.8.8.8
 /ip firewall filter
 add action=drop chain=forward comment="Drop to bogon list" dst-address-list=Bogons
@@ -119,7 +132,9 @@ set dccp disabled=yes
 set sctp disabled=yes
 /ip route
 add distance=1 gateway=`}
-					<span className='user-entry'>{ipTemplate?.gateway}</span>
+					<span className={theme === 'dark' ? 'user-entry dark' : 'user-entry'}>
+						{ipTemplate?.gateway}
+					</span>
 					{`
 /ip service
 set telnet disabled=yes
@@ -132,15 +147,21 @@ set winbox address="66.171.144.0/20,66.185.160.0/20,207.7.96.0/19,192.168.25.0/2
 set api-ssl disabled=yes
 /snmp
 set contact=support@nextlevelinternet.com enabled=yes location="`}
-					<span className='user-entry'>{clientLocation()}</span>
+					<span className={theme === 'dark' ? 'user-entry dark' : 'user-entry'}>
+						{clientLocation()}
+					</span>
 					{`" trap-generators=interfaces trap-target=207.7.100.77 trap-version=2
 /system clock
 set time-zone-name=`}
-					<span className='user-entry'>{timeZone}</span>
+					<span className={theme === 'dark' ? 'user-entry dark' : 'user-entry'}>
+						{timeZone}
+					</span>
 					{`
 /system identity
 set name=`}
-					<span className='user-entry'>{circuitName()}</span>
+					<span className={theme === 'dark' ? 'user-entry dark' : 'user-entry'}>
+						{circuitName()}
+					</span>
 					{`
 /system logging
 set 2 action=echo

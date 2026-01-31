@@ -1,7 +1,19 @@
-.muiselect {
+.select {
 	width: 100%;
-	border-radius: 10px !important;
+	align-self: center;
+	text-align: center;
+	text-align-last: center;
 	margin: 10px;
 	margin-top: 0;
-	align-self: center;
+	padding: 9px;
+	border: 0.8px solid rgb(238, 238, 238) !important;
+	border-radius: 10px !important;
+
+	&:focus {
+		outline: none;
+	}
+
+	.label {
+		color: grey;
+	}
 }

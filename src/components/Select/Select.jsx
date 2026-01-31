@@ -1,43 +1,34 @@
 import React from 'react';
-import {
-	FormControl,
-	InputLabel,
-	MenuItem,
-	Select as MuiSelect,
-} from '@mui/material';
+import { FormControl } from '@mui/material';
 import './select.scss';
 
 const Select = ({
-	id,
 	style,
 	fullWidth,
-	autoWidth,
 	label,
 	value,
 	onChange,
 	options,
+	error,
 }) => {
 	return (
 		<FormControl style={style} fullWidth={fullWidth} size='small'>
-			<InputLabel id={label?.toLowerCase()}>{label}</InputLabel>
-			<MuiSelect
-				className='muiselect'
-				labelId={label?.toLowerCase()}
-				id={id}
+			<select
+				id={label?.toLowerCase()}
+				className='select'
 				value={value}
-				label={label}
 				onChange={onChange}
-				autoWidth={autoWidth}
 			>
-				<MenuItem value=''>
-					<em>None</em>
-				</MenuItem>
+				<option className='label' value=''>
+					{label}
+				</option>
 				{options?.map((option, idx) => (
-					<MenuItem key={idx} value={option?.value}>
+					<option key={idx} value={option?.value}>
 						{option?.label}
-					</MenuItem>
+					</option>
 				))}
-			</MuiSelect>
+			</select>
+			{error && <h6 className='error'>{error}</h6>}
 		</FormControl>
 	);
 };

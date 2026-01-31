@@ -80,8 +80,8 @@ const TextInput = ({
 						rightIcon
 					)}
 				</div>
-				{error && <h6 className='error'>{error}</h6>}
 			</div>
+			{error && <h6 className='error'>{error}</h6>}
 		</FormControl>
 	);
 };

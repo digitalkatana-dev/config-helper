@@ -1,6 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import {
 	Mkt5009BridgedPrivate,
 	Mkt5009BridgedPrivateTP,
@@ -18,24 +17,18 @@ import {
 	MktCCRRoutedVDHCPVB,
 	NoMatch,
 } from './templates';
-import { clearForm } from '../../redux/slices/appSlice';
-import Button from '../../components/Button';
 import './config.scss';
 
 const ConfigReview = () => {
-	const { handoffType, circuitType, entryType, measurement, isTagged, tpLink } =
-		useSelector((state) => state.app);
-	const dispatch = useDispatch();
-	const navigate = useNavigate();
-
-	const handleBack = () => {
-		navigate('/');
-	};
-
-	const handleClear = () => {
-		dispatch(clearForm());
-		navigate('/');
-	};
+	const {
+		handoffType,
+		circuitType,
+		entryType,
+		measurement,
+		isTagged,
+		tpLink,
+		ipTemplate,
+	} = useSelector((state) => state.app);
 
 	const configViews = () => {
 		const isTaggedBool = isTagged === 'yes';
@@ -54,6 +47,7 @@ const ConfigReview = () => {
 				},
 				fiber: {
 					G_false: <MktCCRBridgedPrivate />,
+					G_true: <MktCCRBridgedPrivate />,
 				},
 			},
 
@@ -73,6 +67,10 @@ const ConfigReview = () => {
 					M_false_true: <Mkt5009RoutedVDHCPVBTPF />,
 					M_true_false: <Mkt5009RoutedSwitchSubSFP />,
 					M_true_true: <Mkt5009RoutedTPSubSFP />,
+
+					G_false_false: <MktCCRRoutedLB />,
+					G_false_true: <MktCCRRoutedVDHCPVB />,
+					G_true_false: <MktCCRRoutedSwitchSub />,
 				},
 			},
 		};
@@ -86,9 +84,46 @@ const ConfigReview = () => {
 
 	return (
 		<div id='config-review'>
-			{configViews()}
-			<Button onClick={handleBack}>Go Back</Button>
-			<Button onClick={handleClear}>Restart</Button>
+			<section>
+				{circuitType === 'dia' ? (
+					<div className='ip-temp'>
+						<h3>DIA Template</h3>
+						<pre>
+							<p className='ip-details'>
+								{`Network: ${ipTemplate?.network}
+								Verve Router: ${ipTemplate?.verveRouter}
+								Available IPs: ${ipTemplate?.available}
+								Subnet Mask: ${ipTemplate?.subnetMask}
+								Gateway: ${ipTemplate?.gateway}
+								DNS Primary: ${ipTemplate?.dnsP}
+								DNS Secondary: ${ipTemplate?.dnsS}`}
+							</p>
+						</pre>
+					</div>
+				) : (
+					circuitType === 'nni' && (
+						<div className='ip-temp'>
+							<h3>NNI Template</h3>
+							<pre>
+								<p className='ip-details'>
+									{`Network: ${ipTemplate?.wanNetwork}
+								Core/Verve Gateway: ${ipTemplate?.coreVerveGateway}
+								Verve Router WAN: ${ipTemplate?.verveRouterWan}
+								Subnet Mask: ${ipTemplate?.wanMask}
+								
+								Network: ${ipTemplate?.lanNetwork}
+								Verve Router LAN/Client Gateway: ${ipTemplate?.clientGateway}
+								Available IPs: ${ipTemplate?.available}
+								Subnet Mask: ${ipTemplate?.lanMask}
+								DNS Primary: ${ipTemplate?.dnsP}
+								DNS Secondary: ${ipTemplate?.dnsS}`}
+								</p>
+							</pre>
+						</div>
+					)
+				)}
+			</section>
+			<section>{configViews()}</section>
 		</div>
 	);
 };

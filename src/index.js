@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './redux/rootStore';
-import './index.css';
+import './index.scss';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
@@ -17,7 +17,7 @@ root.render(
 				<App />
 			</PersistGate>
 		</Provider>
-	</React.StrictMode>
+	</React.StrictMode>,
 );
 
 // If you want to start measuring performance in your app, pass a function

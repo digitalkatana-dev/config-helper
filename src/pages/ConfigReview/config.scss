@@ -1,3 +1,14 @@
 #config-review {
 	padding: 25px;
+
+	.ip-temp {
+		width: fit-content;
+		margin: auto;
+		margin-bottom: 10px;
+	}
+
+	.ip-details {
+		text-align: left;
+		white-space: pre-line;
+	}
 }

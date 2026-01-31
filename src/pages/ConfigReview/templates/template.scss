@@ -9,7 +9,11 @@
 		white-space: pre-line;
 
 		.user-entry {
-			color: crimson;
+			color: var(--error);
+
+			&.dark {
+				color: var(--highlight);
+			}
 		}
 	}
 }

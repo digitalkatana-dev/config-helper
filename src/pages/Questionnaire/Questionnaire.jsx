@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Container } from '@mui/material';
+import { Container, Paper } from '@mui/material';
 import {
 	setClientName,
 	setAddress1,
@@ -13,6 +13,7 @@ import {
 	setTimeZone,
 	setCarrier,
 	setHandoffType,
+	setSymmetrical,
 	setSpeedUp,
 	setSpeedDn,
 	setMeasurement,
@@ -28,9 +29,11 @@ import {
 	setDNSs,
 	setTPLink,
 	setIPTemplate,
+	setErrors,
 	clearAppErrors,
 } from '../../redux/slices/appSlice';
 import { processIPs } from '../../util/helpers';
+import { validateConfigData } from '../../util/validators';
 import {
 	states,
 	speedMeasurements,
@@ -57,6 +60,7 @@ const Questionnaire = () => {
 		timeZone,
 		carrier,
 		handoffType,
+		symmetrical,
 		speedUp,
 		speedDn,
 		measurement,
@@ -71,6 +75,7 @@ const Questionnaire = () => {
 		dnsP,
 		dnsS,
 		tpLink,
+		appErrors,
 	} = useSelector((state) => state.app);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -103,6 +108,7 @@ const Questionnaire = () => {
 			zip: setZipCode,
 			carrier: setCarrier,
 			handoff: setHandoffType,
+			symm: setSymmetrical,
 			up: setSpeedUp,
 			dn: setSpeedDn,
 			measure: setMeasurement,
@@ -126,6 +132,37 @@ const Questionnaire = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		// const data = {
+		// 	circuitType,
+		// 	carrier,
+		// 	symmetrical,
+		// 	speedDn,
+		// 	measurement,
+		// 	ipAddress_1,
+		// 	cidr_1,
+		// 	clientName,
+		// 	address_1,
+		// 	city,
+		// 	state,
+		// 	zipCode,
+		// 	entryType,
+		// 	timeZone,
+		// 	isTagged,
+		// 	...(speedUp && { speedUp }),
+		// 	...(dnsP && { dnsP }),
+		// 	...(dnsS && { dnsS }),
+		// 	...(ipAddress_2 && { ipAddress_2 }),
+		// 	...(cidr_2 && { cidr_2 }),
+		// 	...(vlanId && { vlanId }),
+		// };
+
+		// const { valid, errors } = validateConfigData(data);
+
+		// if (!valid) {
+		// 	dispatch(setErrors(errors));
+		// 	return;
+		// }
+
 		ipAddress_1 && handleIP();
 		navigate('/config-result');
 	};
@@ -140,182 +177,218 @@ const Questionnaire = () => {
 
 	return (
 		<Container className='q-container'>
-			<form onSubmit={handleSubmit}>
-				<TextInput
-					placeholder='Client Name'
-					value={clientName}
-					onFocus={handleFocus}
-					onChange={(e) => handleChange('name', e.target.value)}
-				/>
-				<div className='address'>
-					<TextInput
-						placeholder='Address 1'
-						value={address_1}
-						onFocus={handleFocus}
-						onChange={(e) => handleChange('add1', e.target.value)}
-					/>
-					<TextInput
-						placeholder='Address 2'
-						value={address_2}
-						onFocus={handleFocus}
-						onChange={(e) => handleChange('add2', e.target.value)}
-					/>
-					<div className='address-row'>
-						<TextInput
-							placeholder='City'
-							value={city}
-							onFocus={handleFocus}
-							onChange={(e) => handleChange('city', e.target.value)}
-						/>
+			<Paper elevation={5}>
+				<form onSubmit={handleSubmit}>
+					<section>
 						<Select
 							fullWidth
-							label='State'
-							options={states}
-							value={state}
-							onChange={(e) => handleChange('state', e.target.value)}
+							label='Circuit Type'
+							options={circuitTypes}
+							value={circuitType}
+							onChange={(e) => handleChange('circuit', e.target.value)}
+							error={appErrors?.circuitType}
 						/>
-						<TextInput
-							placeholder='Zip Code'
-							value={zipCode}
-							onFocus={handleFocus}
-							onChange={(e) => handleChange('zip', e.target.value)}
-						/>
-					</div>
-				</div>
-				<div className='carrier-row'>
-					<div className='txt'>
-						<TextInput
-							placeholder='Carrier'
-							value={carrier}
-							onFocus={handleFocus}
-							onChange={(e) => handleChange('carrier', e.target.value)}
-						/>
-					</div>
-					<div className='radio'>
-						<RadioGroup
-							row
-							label='Handoff'
-							value={handoffType}
-							onChange={(e) => handleChange('handoff', e.target.value)}
-							options={handoffOptions}
-						/>
-					</div>
-				</div>
-				<div className='speed-row'>
-					<TextInput
-						placeholder='Speed Up'
-						value={speedUp}
-						onFocus={handleFocus}
-						onChange={(e) => handleChange('up', e.target.value)}
-					/>
-					<TextInput
-						placeholder='Speed Down'
-						value={speedDn}
-						onFocus={handleFocus}
-						onChange={(e) => handleChange('dn', e.target.value)}
-					/>
-					<Select
-						fullWidth
-						label='Measure'
-						options={speedMeasurements}
-						value={measurement}
-						onChange={(e) => handleChange('measure', e.target.value)}
-					/>
-				</div>
-				<Select
-					fullWidth
-					label='Circuit Type'
-					options={circuitTypes}
-					value={circuitType}
-					onChange={(e) => handleChange('circuit', e.target.value)}
-				/>
-				{circuitType === 'nni' && (
-					<div className='q-row'>
-						<div className='radio'>
-							<RadioGroup
-								row
-								label='Tagged?'
-								value={isTagged}
-								onChange={(e) => handleChange('tag', e.target.value)}
-								options={taggedOptions}
-							/>
-						</div>
-						{isTagged === 'yes' && (
+						<div className='q-row'>
 							<div className='txt'>
 								<TextInput
-									placeholder='VLAN'
-									value={vlanId}
+									placeholder='Carrier'
+									value={carrier}
 									onFocus={handleFocus}
-									onChange={(e) => handleChange('vlan', e.target.value)}
+									onChange={(e) => handleChange('carrier', e.target.value)}
+									error={appErrors?.carrier}
+								/>
+							</div>
+							<div className='radio'>
+								<RadioGroup
+									row
+									label='Handoff'
+									value={handoffType}
+									onChange={(e) => handleChange('handoff', e.target.value)}
+									options={handoffOptions}
+								/>
+							</div>
+						</div>
+					</section>
+					<section>
+						<RadioGroup
+							row
+							label='Symmetrical?'
+							value={symmetrical}
+							onChange={(e) => handleChange('symm', e.target.value)}
+							options={taggedOptions}
+						/>
+						<div className='q-row'>
+							{symmetrical === 'no' && (
+								<TextInput
+									placeholder='Speed Up'
+									value={speedUp}
+									onFocus={handleFocus}
+									onChange={(e) => handleChange('up', e.target.value)}
+								/>
+							)}
+							<TextInput
+								placeholder='Speed Down'
+								value={speedDn}
+								onFocus={handleFocus}
+								onChange={(e) => handleChange('dn', e.target.value)}
+								error={appErrors?.speedDn}
+							/>
+							<Select
+								fullWidth
+								label='Measure'
+								options={speedMeasurements}
+								value={measurement}
+								onChange={(e) => handleChange('measure', e.target.value)}
+								error={appErrors?.measurement}
+							/>
+						</div>
+						{circuitType === 'nni' && (
+							<div className='q-row'>
+								<div className='radio'>
+									<RadioGroup
+										row
+										label='Tagged?'
+										value={isTagged}
+										onChange={(e) => handleChange('tag', e.target.value)}
+										options={taggedOptions}
+									/>
+								</div>
+								{isTagged === 'yes' && (
+									<div className='txt'>
+										<TextInput
+											placeholder='VLAN'
+											value={vlanId}
+											onFocus={handleFocus}
+											onChange={(e) => handleChange('vlan', e.target.value)}
+											error={appErrors?.vlanId}
+										/>
+									</div>
+								)}
+							</div>
+						)}
+						<div className='q-row'>
+							<TextInput
+								placeholder='IP Address 1'
+								value={ipAddress_1}
+								onFocus={handleFocus}
+								onChange={(e) => handleChange('ip1', e.target.value)}
+								error={appErrors?.ipAddress_1}
+							/>
+							<Select
+								style={{ width: '30%' }}
+								label='Subnet'
+								options={cidrOptions}
+								value={cidr_1}
+								onChange={(e) => handleChange('cidr1', e.target.value)}
+								error={appErrors?.cidr_1}
+							/>
+						</div>
+						{circuitType === 'nni' && (
+							<div className='q-row'>
+								<TextInput
+									placeholder='IP Address 2'
+									value={ipAddress_2}
+									onFocus={handleFocus}
+									onChange={(e) => handleChange('ip2', e.target.value)}
+									error={appErrors?.ipAddress_2}
+								/>
+								<Select
+									style={{ width: '30%' }}
+									label='Subnet'
+									options={cidrOptions}
+									value={cidr_2}
+									onChange={(e) => handleChange('cidr2', e.target.value)}
+									error={appErrors?.cidr_2}
 								/>
 							</div>
 						)}
-					</div>
-				)}
-				<div className='cidr-row'>
-					<TextInput
-						placeholder='IP Address 1'
-						value={ipAddress_1}
-						onFocus={handleFocus}
-						onChange={(e) => handleChange('ip1', e.target.value)}
-					/>
+						{circuitType === 'dia' && (
+							<div className='q-row'>
+								<TextInput
+									placeholder='Primary DNS'
+									value={dnsP}
+									onFocus={handleFocus}
+									onChange={(e) => handleChange('dns1', e.target.value)}
+									error={appErrors?.dnsP}
+								/>
+								<TextInput
+									placeholder='Secondary DNS'
+									value={dnsS}
+									onFocus={handleFocus}
+									onChange={(e) => handleChange('dns2', e.target.value)}
+									error={appErrors?.dnsS}
+								/>
+							</div>
+						)}
+					</section>
+					<section>
+						<RadioGroup
+							row
+							label='TP-Link?'
+							value={tpLink}
+							onChange={(e) => handleChange('tp', e.target.value)}
+							options={taggedOptions}
+						/>
+					</section>
+					<section>
+						<TextInput
+							placeholder='Client Name'
+							value={clientName}
+							onFocus={handleFocus}
+							onChange={(e) => handleChange('name', e.target.value)}
+							error={appErrors?.clientName}
+						/>
+						<div className='address'>
+							<TextInput
+								placeholder='Address 1'
+								value={address_1}
+								onFocus={handleFocus}
+								onChange={(e) => handleChange('add1', e.target.value)}
+								error={appErrors?.address_1}
+							/>
+							<TextInput
+								placeholder='Address 2'
+								value={address_2}
+								onFocus={handleFocus}
+								onChange={(e) => handleChange('add2', e.target.value)}
+							/>
+							<div className='q-row'>
+								<TextInput
+									placeholder='City'
+									value={city}
+									onFocus={handleFocus}
+									onChange={(e) => handleChange('city', e.target.value)}
+									error={appErrors?.city}
+								/>
+								<Select
+									fullWidth
+									label='State'
+									options={states}
+									value={state}
+									onChange={(e) => handleChange('state', e.target.value)}
+									error={appErrors?.state}
+								/>
+								<TextInput
+									placeholder='Zip Code'
+									value={zipCode}
+									onFocus={handleFocus}
+									onChange={(e) => handleChange('zip', e.target.value)}
+									error={appErrors?.zipCode}
+								/>
+							</div>
+						</div>
+					</section>
 					<Select
-						style={{ width: '30%' }}
-						label='Subnet'
-						options={cidrOptions}
-						value={cidr_1}
-						onChange={(e) => handleChange('cidr1', e.target.value)}
+						fullWidth
+						label='Entry Type'
+						options={entryTypes}
+						value={entryType}
+						onChange={(e) => handleChange('entry', e.target.value)}
+						error={appErrors?.entryType}
 					/>
-				</div>
-				{circuitType === 'dia' && (
-					<div className='dns-row'>
-						<TextInput
-							placeholder='Primary DNS'
-							value={dnsP}
-							onFocus={handleFocus}
-							onChange={(e) => handleChange('dns1', e.target.value)}
-						/>
-						<TextInput
-							placeholder='Secondary DNS'
-							value={dnsS}
-							onFocus={handleFocus}
-							onChange={(e) => handleChange('dns2', e.target.value)}
-						/>
-					</div>
-				)}
-				{circuitType === 'nni' && (
-					<div className='cidr-row'>
-						<TextInput
-							placeholder='IP Address 2'
-							value={ipAddress_2}
-							onFocus={handleFocus}
-							onChange={(e) => handleChange('ip2', e.target.value)}
-						/>
-						<Select
-							style={{ width: '30%' }}
-							label='Subnet'
-							options={cidrOptions}
-							value={cidr_2}
-							onChange={(e) => handleChange('cidr2', e.target.value)}
-						/>
-					</div>
-				)}
-				<RadioGroup
-					row
-					label='TP-Link?'
-					value={tpLink}
-					onChange={(e) => handleChange('tp', e.target.value)}
-					options={taggedOptions}
-				/>
-				<Select
-					fullWidth
-					label='Entry Type'
-					options={entryTypes}
-					value={entryType}
-					onChange={(e) => handleChange('entry', e.target.value)}
-				/>
-				<Button type='submit'>Submit</Button>
-			</form>
+					<Button type='submit'>Submit</Button>
+				</form>
+			</Paper>
 		</Container>
 	);
 };

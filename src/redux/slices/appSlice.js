@@ -32,6 +32,7 @@ const initialState = appAdapter.getInitialState({
 	timeZone: '',
 	carrier: '',
 	handoffType: 'copper',
+	symmetrical: 'yes',
 	speedUp: '',
 	speedDn: '',
 	measurement: '',
@@ -86,6 +87,9 @@ export const appSlice = createSlice({
 		setHandoffType: (state, action) => {
 			state.handoffType = action.payload;
 		},
+		setSymmetrical: (state, action) => {
+			state.symmetrical = action.payload;
+		},
 		setSpeedUp: (state, action) => {
 			state.speedUp = action.payload;
 		},
@@ -134,6 +138,9 @@ export const appSlice = createSlice({
 		setIPTemplate: (state, action) => {
 			state.ipTemplate = action.payload;
 		},
+		setErrors: (state, action) => {
+			state.appErrors = action.payload;
+		},
 		clearForm: (state) => {
 			state.clientName = '';
 			state.address_1 = '';
@@ -144,6 +151,7 @@ export const appSlice = createSlice({
 			state.timeZone = '';
 			state.carrier = '';
 			state.handoffType = 'copper';
+			state.symmetrical = 'yes';
 			state.speedUp = '';
 			state.speedDn = '';
 			state.measurement = '';
@@ -195,6 +203,7 @@ export const {
 	setTimeZone,
 	setCarrier,
 	setHandoffType,
+	setSymmetrical,
 	setSpeedUp,
 	setSpeedDn,
 	setMeasurement,
@@ -210,6 +219,7 @@ export const {
 	setDNSs,
 	setTPLink,
 	setIPTemplate,
+	setErrors,
 	clearForm,
 	clearAppSuccess,
 	clearAppErrors,

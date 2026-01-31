@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Topbar from './components/Topbar';
 import Questionnaire from './pages/Questionnaire';
 import ConfigReview from './pages/ConfigReview';
-import './App.css';
+import './App.scss';
 
 function App() {
 	const { theme } = useSelector((state) => state.app);
