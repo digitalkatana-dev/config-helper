@@ -89,6 +89,7 @@ export const appSlice = createSlice({
 		},
 		setSymmetrical: (state, action) => {
 			state.symmetrical = action.payload;
+			if (action.payload === 'yes') state.speedUp = '';
 		},
 		setSpeedUp: (state, action) => {
 			state.speedUp = action.payload;
@@ -104,12 +105,11 @@ export const appSlice = createSlice({
 		},
 		setCircuitType: (state, action) => {
 			state.circuitType = action.payload;
-			if (action.payload === 'nni') {
-				state.cidr_1 = '/30';
-			}
+			if (action.payload === 'nni') state.cidr_1 = '/30';
 		},
 		setIsTagged: (state, action) => {
 			state.isTagged = action.payload;
+			if (action.payload === 'no') state.vlanId = '';
 		},
 		setVlanId: (state, action) => {
 			state.vlanId = action.payload;
