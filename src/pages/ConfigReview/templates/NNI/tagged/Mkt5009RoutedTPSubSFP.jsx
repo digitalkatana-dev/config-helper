@@ -1,17 +1,24 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import {
+	processInterfaceName,
 	processClientLocation,
 	processCircuitName,
+	processCircuitSpeed,
 } from '../../../../../util/helpers';
 import '../../template.scss';
 
 const Mkt5009RoutedTPSubSFP = () => {
 	const {
+		theme,
+		carrier,
 		clientName,
+		speedUp,
 		speedDn,
 		measurement,
+		vlanId,
 		cidr_1,
+		cidr_2,
 		address_1,
 		address_2,
 		city,
@@ -21,7 +28,29 @@ const Mkt5009RoutedTPSubSFP = () => {
 		ipTemplate,
 	} = useSelector((state) => state.app);
 
-	const wan = `${ipTemplate?.verveRouter + cidr_1}`;
+	const wan = `${ipTemplate?.verveRouterWan + cidr_1}`;
+	const lan = `${ipTemplate?.clientGateway + cidr_2}`;
+	const shaping = `${speedDn + measurement}`;
+
+	const interfaceName = () => {
+		const data = {
+			carrier,
+			speedDn,
+			measurement,
+		};
+
+		return processInterfaceName(data);
+	};
+
+	const circuitSpeed = () => {
+		const data = {
+			...(speedUp && { speedUp }),
+			speedDn,
+			measurement,
+		};
+
+		return processCircuitSpeed(data);
+	};
 
 	const clientLocation = () => {
 		const data = {
@@ -57,14 +86,20 @@ const Mkt5009RoutedTPSubSFP = () => {
 					{`/interface bridge
 add name=Voice_Bridge
 /interface vlan
-add interface=sfp-sfpplus1 name=[[[[Circuit type and speed (see HOMIR) Ex:ATT_ASE_5M]]]] vlan-id=[[[[CHANGE -VLAN ASSIGNMENT]]]]
+add interface=sfp-sfpplus1 name=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{interfaceName()}
+					</span>
+					{` vlan-id=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{vlanId}
+					</span>
+					{`
 add interface=Voice_Bridge name=Voice vlan-id=20
 /ip pool
 add name=dhcp_pool1 ranges=192.168.25.100-192.168.25.200
 /snmp community
-set [ find default=yes ] addresses=\
-    66.171.157.2/32,68.68.198.2/32,66.171.147.130/32 name=\
-    nli-client
+set [ find default=yes ] addresses=66.171.157.2/32,68.68.198.2/32,66.171.147.130/32 name=nli-client
 /ip dhcp-server
 add address-pool=dhcp_pool1 disabled=no interface=Voice_Bridge name=dhcp1
 /ip dhcp-server option
@@ -78,18 +113,35 @@ add bridge=Voice_Bridge interface=ether7
 /interface bridge vlan
 add bridge=Voice_Bridge tagged=ether3 vlan-ids=20
 /ip address
-add address=[[[[[CHANGE WAN IP ADDRESS][/NOTATION for SUBNET ex:192.168.1.2/30]]]]] interface=[[[[[reference sfp-sfpplus1 name above]]]]] network=[[[[WAN NETWORK IP ADDRESS]]]]
+add address=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{wan}
+					</span>
+					{` interface=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{interfaceName()}
+					</span>
+					{` network=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{ipTemplate?.wanNetwork}
+					</span>
+					{`
 add address=192.168.25.1/24 interface=Voice_Bridge network=192.168.25.0
-add address=[[[[[CHANGE LAN IP ADDRESS][/NOTATION for SUBNET ex:10.10.50.2/29]]]]] interface=ether2 network=[[[[[LAN NETWORK IP ADDRESS]]]]]
+add address=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{lan}
+					</span>
+					{` interface=ether2 network=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{ipTemplate?.lanNetwork}
+					</span>
+					{`
 /ip dhcp-server network
-add address=192.168.25.0/24 dhcp-option=Option160 dns-server=207.7.100.100,208.67.222.222,8.8.4.4\
-    gateway=192.168.25.1
+add address=192.168.25.0/24 dhcp-option=Option160 dns-server=207.7.100.100,208.67.222.222,8.8.4.4 gateway=192.168.25.1
 /ip dns
-set allow-remote-requests=no servers=\
-    208.67.222.222,66.171.145.146,207.7.100.100,8.8.8.8
+set allow-remote-requests=no servers=208.67.222.222,66.171.145.146,207.7.100.100,8.8.8.8
 /ip firewall filter
-add action=drop chain=forward comment="Drop to bogon list" dst-address-list=\
-    Bogons
+add action=drop chain=forward comment="Drop to bogon list" dst-address-list=Bogons
 add action=accept chain=forward protocol=icmp
 add action=accept chain=input protocol=icmp
 add action=accept chain=input connection-state=established
@@ -99,12 +151,19 @@ add action=accept chain=input dst-port=161 protocol=udp
 add action=accept chain=input dst-port=22 protocol=tcp
 add action=accept chain=input dst-port=80 protocol=tcp
 add action=accept chain=input dst-port=8080 protocol=tcp
-add action=drop chain=input in-interface=[[[[[reference sfp-sfpplus1 name above Ex:ATT_ASE_5M]]]]
+add action=drop chain=input in-interface=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{interfaceName()}
+					</span>
+					{`
 /ip firewall nat
 add action=masquerade chain=srcnat disabled=yes
 add action=masquerade chain=srcnat src-address=192.168.25.0/24
-add action=dst-nat chain=dstnat dst-port=8080 in-interface=[[[[[reference sfp-sfpplus1 name above]]]]] log=yes \
-    port="" protocol=tcp to-addresses=192.168.25.2 to-ports=80
+add action=dst-nat chain=dstnat dst-port=8080 in-interface=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{interfaceName()}
+					</span>
+					{` log=yes port="" protocol=tcp to-addresses=192.168.25.2 to-ports=80
 /ip firewall service-port
 set ftp disabled=yes
 set tftp disabled=yes
@@ -116,32 +175,56 @@ set udplite disabled=yes
 set dccp disabled=yes
 set sctp disabled=yes
 /ip route
-add distance=1 gateway=[[[[[IP ADDRESS OF CORE]]]]]
+add distance=1 gateway=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{ipTemplate?.coreVerveGateway}
+					</span>
+					{`
 /queue simple
-add max-limit=[[[[[Upload/download speed of circuit ex: 500M/500M]]]]] name=Shaping-[[[[speed of circuit ex:500M]]]] target=[[[[[reference sfp-sfpplus1 name above ex: ATT_ASE_5M]]]]] dst=0.0.0.0/0
+add max-limit=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{circuitSpeed()}
+					</span>
+					{` name=Shaping-`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{shaping}
+					</span>
+					{` target=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{interfaceName()}
+					</span>
+					{` dst=0.0.0.0/0
 /ip service
 set telnet disabled=yes
 set ftp disabled=yes
 set www disabled=yes
 set ssh address=66.171.144.0/20,66.185.160.0/20,207.7.96.0/19,68.101.245.246/32,104.51.34.250/32,76.248.46.80/29,47.157.175.189/32,63.247.145.30/32,71.208.138.15/32
 set api disabled=yes
-set winbox address="66.171.144.0/20,66.185.160.0/20,207.7.96.0/19,192.168.25.0\
-    /24,68.101.245.246/32,47.157.175.189/32,63.247.145.30/32,71.208.138.15/32"
+set winbox address="66.171.144.0/20,66.185.160.0/20,207.7.96.0/19,192.168.25.0/24,68.101.245.246/32,47.157.175.189/32,63.247.145.30/32,71.208.138.15/32"
 set api-ssl disabled=yes
 /snmp
-set contact=support@nextlevelinternet.com enabled=yes location=\
-    "[[[[CLIENT ADDRESS]]]]" trap-generators=\
-    interfaces trap-interfaces=sfp-sfpplus1 trap-target=207.7.100.77 trap-version=2
+set contact=support@nextlevelinternet.com enabled=yes location="`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{clientLocation()}
+					</span>
+					{`" trap-generators=interfaces trap-interfaces=sfp-sfpplus1 trap-target=207.7.100.77 trap-version=2
 /system clock
-set time-zone-name=[[[[[America/Los_Angeles, America/Denver, America/Chicago, America/New_York]]]]]
+set time-zone-name=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{timeZone}
+					</span>
+					{`
 /system identity
-set name=[[[[Circuit Name in HOMIR (Caps for first letter, no spaces or special characters - ex:Luna_Grill_LG25_Ventura_50M]]]]
+set name=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{circuitName()}
+					</span>
+					{`
 /system logging
 set 2 action=echo
 add action=echo topics=interface
 /user group
-add name=tech policy="local,read,write,test,winbox,!telnet,!ssh,!ftp,!reboot,!policy,!password,!web,!s\
-    niff,!sensitive,!api,!romon,!rest-api"
+add name=tech policy="local,read,write,test,winbox,!telnet,!ssh,!ftp,!reboot,!policy,!password,!web,!sniff,!sensitive,!api,!romon,!rest-api"
 /user add name=nli-sup password=B@ndw1dth4@11 group=full
 /user add name=nli-eng password=An51bl3w0rk54us! group=full
 /user add name=tech password=!nlit3mpt3ch! group=tech 

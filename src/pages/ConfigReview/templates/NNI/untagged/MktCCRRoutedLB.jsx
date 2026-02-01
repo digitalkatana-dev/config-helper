@@ -3,15 +3,19 @@ import { useSelector } from 'react-redux';
 import {
 	processClientLocation,
 	processCircuitName,
+	processCircuitSpeed,
 } from '../../../../../util/helpers';
 import '../../template.scss';
 
 const MktCCRRoutedLB = () => {
 	const {
+		theme,
 		clientName,
+		speedUp,
 		speedDn,
 		measurement,
 		cidr_1,
+		cidr_2,
 		address_1,
 		address_2,
 		city,
@@ -21,7 +25,19 @@ const MktCCRRoutedLB = () => {
 		ipTemplate,
 	} = useSelector((state) => state.app);
 
-	const wan = `${ipTemplate?.verveRouter + cidr_1}`;
+	const wan = `${ipTemplate?.verveRouterWan + cidr_1}`;
+	const lan = `${ipTemplate?.clientGateway + cidr_2}`;
+	const shaping = `${speedDn + measurement}`;
+
+	const circuitSpeed = () => {
+		const data = {
+			...(speedUp && { speedUp }),
+			speedDn,
+			measurement,
+		};
+
+		return processCircuitSpeed(data);
+	};
 
 	const clientLocation = () => {
 		const data = {
@@ -54,17 +70,31 @@ const MktCCRRoutedLB = () => {
 					{`/interface bridge
 add name=LAN_Bridge
 /snmp community
-set [ find default=yes ] addresses=\
-    66.171.157.2/32,68.68.198.2/32,66.171.147.130/32 name=\
-    nli-client
+set [ find default=yes ] addresses=66.171.157.2/32,68.68.198.2/32,66.171.147.130/32 name=nli-client
 set [ find default=yes ] addresses=207.7.100.77/32 name=nli-client
 /interface bridge port
 add bridge=LAN_Bridge interface=sfp-sfpplus2
 add bridge=LAN_Bridge interface=sfp-sfpplus3
 add bridge=LAN_Bridge interface=sfp-sfpplus4
 /ip address
-add address=[[[[[CHANGE WAN IP ADDRESS][/NOTATION for SUBNET ex:192.168.1.2/30]]]]]]]] interface=sfp-sfpplus1 network=[[[[[WAN NETWORK IP ADDRESS]]]]]]]
-add address=[[[[[CHANGE LAN IP ADDRESS][/NOTATION for SUBNET ex:10.10.50.2/29]]]]]]]] interface=LAN_Bridge network=[[[[[LAN NETWORK IP ADDRESS]]]]]]]]
+add address=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{wan}
+					</span>
+					{` interface=sfp-sfpplus1 network=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{ipTemplate?.wanNetwork}
+					</span>
+					{`
+add address=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{lan}
+					</span>
+					{` interface=LAN_Bridge network=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{ipTemplate?.lanNetwork}
+					</span>
+					{`
 /ip dns
 set allow-remote-requests=no servers=208.67.222.222,66.171.145.146,207.7.100.100,8.8.8.8
 /ip firewall filter
@@ -90,9 +120,21 @@ set udplite disabled=yes
 set dccp disabled=yes
 set sctp disabled=yes						 
 /ip route
-add distance=1 gateway=[[[[[[IP ADDRESS OF CORE]]]]]]]
+add distance=1 gateway=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{ipTemplate?.coreVerveGatway}
+					</span>
+					{`
 /queue simple
-add max-limit=[[[[[Upload/download speed of circuit ex: 500M/500M]]]]] name=Shaping-[[[[speed of circuit ex:500M]]]] target=sfp-sfpplus1 dst=0.0.0.0/0
+add max-limit=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{circuitSpeed()}
+					</span>
+					{` name=Shaping-`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{shaping}
+					</span>
+					{` target=sfp-sfpplus1 dst=0.0.0.0/0
 /ip service
 set telnet disabled=yes
 set ftp disabled=yes
@@ -102,14 +144,26 @@ set api disabled=yes
 set winbox address="66.171.144.0/20,66.185.160.0/20,207.7.96.0/19,192.168.25.0/24,68.101.245.246/32,47.157.175.189/32,63.247.145.30/32,71.208.138.15/32"
 set api-ssl disabled=yes
 /snmp
-set contact=support@nextlevelinternet.com enabled=yes location="[[[[[CLIENT ADDRESS]]]]]]]" trap-generators=interfaces trap-interfaces=sfp-sfpplus1 trap-target=207.7.100.77 trap-version=2
+set contact=support@nextlevelinternet.com enabled=yes location="`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{clientLocation()}
+					</span>
+					{`" trap-generators=interfaces trap-interfaces=sfp-sfpplus1 trap-target=207.7.100.77 trap-version=2
 /system clock
-set time-zone-name=[[[[[America/Los_Angeles, America/Denver, America/Chicago, America/New_York]]]]]
+set time-zone-name=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{timeZone}
+					</span>
+					{`
 /system logging
 set 2 action=echo
 add action=echo topics=interface
 /system identity
-set name=[[[[[Circuit Name in HOMIR (Caps for first letter, no spaces or special characters - ex:Luna_Grill_LG25_Ventura_50M]]]]]]]
+set name=`}
+					<span className={`user-entry ${theme === 'dark' && theme}`}>
+						{circuitName()}
+					</span>
+					{`
 /user group
 add name=tech policy="local,read,write,test,winbox,!telnet,!ssh,!ftp,!reboot,!policy,!password,!web,!sniff,!sensitive,!api,!romon,!dude"
 /user add name=nli-sup password=B@ndw1dth4@11 group=full

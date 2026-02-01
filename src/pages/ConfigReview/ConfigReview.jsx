@@ -44,6 +44,9 @@ const ConfigReview = () => {
 				copper: {
 					M_false: <Mkt5009BridgedPrivate />,
 					M_true: <Mkt5009BridgedPrivateTP />,
+
+					G_false: <MktCCRBridgedPrivate />,
+					G_true: <MktCCRBridgedPrivate />,
 				},
 				fiber: {
 					G_false: <MktCCRBridgedPrivate />,
@@ -53,9 +56,9 @@ const ConfigReview = () => {
 
 			nni: {
 				copper: {
-					M_false_false: <Mkt5009RoutedVDHCPVB />,
-					M_false_true: <Mkt5009RoutedVDHCPVBTP />,
-					M_true_false: <Mkt5009RoutedSwitchSub />,
+					M_false_false: <Mkt5009RoutedVDHCPVB />, //
+					M_false_true: <Mkt5009RoutedVDHCPVBTP />, //
+					M_true_false: <Mkt5009RoutedSwitchSub />, //
 					M_true_true: <Mkt5009RoutedTPSub />,
 
 					G_false_false: <MktCCRRoutedLB />,

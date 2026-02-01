@@ -78,6 +78,7 @@ export const processIPs = (data) => {
 
 export const processInterfaceName = (data) => {
 	let { carrier, speedDn, measurement } = data;
+	carrier = carrier.toUpperCase();
 
 	if (carrier === 'ATT') {
 		carrier = 'ATT ASE';
