@@ -84,11 +84,11 @@ const Mkt5009RoutedTPSub = () => {
 add name=Voice_Bridge
 /interface vlan
 add interface=ether1 name=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{interfaceName()}
 					</span>
 					{` vlan-id=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{vlanId}
 					</span>
 					{`
@@ -111,25 +111,25 @@ add bridge=Voice_Bridge interface=ether7
 add bridge=Voice_Bridge tagged=ether4 vlan-ids=20
 /ip address
 add address=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{wan}
 					</span>
 					{` interface=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{interfaceName()}
 					</span>
 					{` network=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{ipTemplate?.wanNetwork}
 					</span>
 					{`
 add address=192.168.25.1/24 interface=Voice_Bridge network=192.168.25.0
 add address=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{lan}
 					</span>
 					{` interface=ether2 network=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{ipTemplate?.lanNetwork}
 					</span>
 					{`
@@ -149,7 +149,7 @@ add action=accept chain=input dst-port=22 protocol=tcp
 add action=accept chain=input dst-port=80 protocol=tcp
 add action=accept chain=input dst-port=8080 protocol=tcp
 add action=drop chain=input in-interface=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{interfaceName()}
 					</span>
 					{`
@@ -157,7 +157,7 @@ add action=drop chain=input in-interface=`}
 add action=masquerade chain=srcnat disabled=yes
 add action=masquerade chain=srcnat src-address=192.168.25.0/24
 add action=dst-nat chain=dstnat dst-port=8080 in-interface=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{interfaceName()}
 					</span>
 					{` log=yes port="" protocol=tcp to-addresses=192.168.25.2 to-ports=80
@@ -173,21 +173,21 @@ set dccp disabled=yes
 set sctp disabled=yes
 /ip route
 add distance=1 gateway=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{ipTemplate?.coreVerveGateway}
 					</span>
 					{`
 /queue simple
 add max-limit=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{circuitSpeed()}
 					</span>
 					{` name=Shaping-`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{shaping}
 					</span>
 					{` target=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{interfaceName()}
 					</span>
 					{` dst=0.0.0.0/0
@@ -202,19 +202,19 @@ set api-ssl disabled=yes
 /snmp
 set contact=support@nextlevelinternet.com enabled=yes location=\
     "`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{clientLocation()}
 					</span>
 					{`" trap-generators=interfaces trap-interfaces=ether1 trap-target=207.7.100.77 trap-version=2
 /system clock
 set time-zone-name=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{timeZone}
 					</span>
 					{`
 /system identity
 set name=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{circuitName()}
 					</span>
 					{`

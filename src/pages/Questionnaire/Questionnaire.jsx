@@ -51,6 +51,7 @@ import './questionnaire.scss';
 
 const Questionnaire = () => {
 	const {
+		theme,
 		clientName,
 		address_1,
 		address_2,
@@ -177,7 +178,7 @@ const Questionnaire = () => {
 
 	return (
 		<Container className='q-container'>
-			<Paper elevation={5}>
+			<Paper className={`${theme === 'dark' ? theme : ''}`} elevation={5}>
 				<form onSubmit={handleSubmit}>
 					<section>
 						<Select

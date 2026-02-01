@@ -78,21 +78,21 @@ add code=160 name=Option160 value="'http://ndp.mynlv.com/cfg'"
 add interface=none
 /ip address																				
 add address=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{wan}
 					</span>
 					{` interface=sfp-sfpplus1 network=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{ipTemplate?.wanNetwork}
 					</span>
 					{`
 add address=192.168.25.1/24 interface=sfp-sfpplus3 network=192.168.25.0
 add address=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{lan}
 					</span>
 					{` interface=sfp-sfpplus2 network=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{ipTemplate?.lanNetwork}
 					</span>
 					{`
@@ -126,17 +126,17 @@ set dccp disabled=yes
 set sctp disabled=yes						 
 /ip route
 add distance=1 gateway=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{ipTemplate?.coreVerveGateway}
 					</span>
 					{`
 /queue simple
 add max-limit=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{circuitSpeed()}
 					</span>
 					{` name=Shaping-`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{shaping}
 					</span>
 					{` target=sfp-sfpplus1 dst=0.0.0.0/0
@@ -150,13 +150,13 @@ set winbox address="66.171.144.0/20,66.185.160.0/20,207.7.96.0/19,192.168.25.0/2
 set api-ssl disabled=yes
 /snmp
 set contact=support@nextlevelinternet.com enabled=yes location="`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{clientLocation()}
 					</span>
 					{`" trap-generators=interfaces trap-interfaces=sfp-sfpplus1 trap-target=207.7.100.77 trap-version=2
 /system clock
 set time-zone-name=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{timeZone}
 					</span>
 					{`
@@ -165,7 +165,7 @@ set 2 action=echo
 add action=echo topics=interface
 /system identity
 set name=`}
-					<span className={`user-entry ${theme === 'dark' && theme}`}>
+					<span className={`user-entry ${theme === 'dark' ? theme : ''}`}>
 						{circuitName()}
 					</span>
 					{`

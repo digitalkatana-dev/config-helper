@@ -6,8 +6,10 @@
 	margin: 10px;
 	margin-top: 0;
 	padding: 9px;
-	border: 0.8px solid rgb(238, 238, 238) !important;
+	border: 0.87px solid rgb(238, 238, 238) !important;
 	border-radius: 10px !important;
+	background-color: transparent;
+	color: var(--txt-primary);
 
 	&:focus {
 		outline: none;
@@ -15,5 +17,9 @@
 
 	.label {
 		color: grey;
+	}
+
+	option {
+		background-color: var(--paper-background);
 	}
 }

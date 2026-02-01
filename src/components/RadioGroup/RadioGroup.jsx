@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import {
 	FormControl,
 	FormControlLabel,
@@ -6,11 +7,16 @@ import {
 	Radio,
 	RadioGroup as MuiRadioGroup,
 } from '@mui/material';
+import './radio.scss';
 
-const RadioGroup = ({ id, row, label, name, value, onChange, options }) => {
+const RadioGroup = ({ row, label, name, value, onChange, options }) => {
+	const { theme } = useSelector((state) => state.app);
+
 	return (
 		<FormControl>
-			<FormLabel id={id}>{label}</FormLabel>
+			<FormLabel className={`radio-group ${theme === 'dark' ? theme : ''}`}>
+				{label}
+			</FormLabel>
 			<MuiRadioGroup row={row} name={name} value={value} onChange={onChange}>
 				{options?.map((option, idx) => (
 					<FormControlLabel

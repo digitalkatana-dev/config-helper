@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { FormControl } from '@mui/material';
 import './select.scss';
 
@@ -11,11 +12,13 @@ const Select = ({
 	options,
 	error,
 }) => {
+	const { theme } = useSelector((state) => state.app);
+
 	return (
 		<FormControl style={style} fullWidth={fullWidth} size='small'>
 			<select
 				id={label?.toLowerCase()}
-				className='select'
+				className={`select ${theme === 'dark' ? theme : ''}`}
 				value={value}
 				onChange={onChange}
 			>
