@@ -171,7 +171,7 @@ const Questionnaire = () => {
 		// }
 
 		ipAddress_1 && handleIP();
-		// navigate('/config-result');
+		navigate('/config-result');
 	};
 
 	const handleTimeZone = useCallback(() => {
