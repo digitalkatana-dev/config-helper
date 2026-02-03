@@ -44,6 +44,7 @@ const initialState = appAdapter.getInitialState({
 	ipAddress_2: '',
 	cidr_1: '',
 	cidr_2: '',
+	gatewayLocation: 'beg',
 	dnsP: '',
 	dnsS: '',
 	tpLink: 'no',
@@ -126,6 +127,9 @@ export const appSlice = createSlice({
 		setCidr2: (state, action) => {
 			state.cidr_2 = action.payload;
 		},
+		setGatewayLocation: (state, action) => {
+			state.gatewayLocation = action.payload;
+		},
 		setDNSp: (state, action) => {
 			state.dnsP = action.payload;
 		},
@@ -163,6 +167,7 @@ export const appSlice = createSlice({
 			state.ipAddress_2 = '';
 			state.cidr_1 = '';
 			state.cidr_2 = '';
+			state.gatewayLocation = 'beg';
 			state.dnsP = '';
 			state.dnsS = '';
 			state.tpLink = 'no';
@@ -215,6 +220,7 @@ export const {
 	setIPAddress2,
 	setCidr1,
 	setCidr2,
+	setGatewayLocation,
 	setDNSp,
 	setDNSs,
 	setTPLink,

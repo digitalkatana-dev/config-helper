@@ -25,6 +25,7 @@ import {
 	setIPAddress2,
 	setCidr1,
 	setCidr2,
+	setGatewayLocation,
 	setDNSp,
 	setDNSs,
 	setTPLink,
@@ -42,6 +43,7 @@ import {
 	taggedOptions,
 	handoffOptions,
 	cidrOptions,
+	gwayLocOptions,
 } from '../../util/data';
 import TextInput from '../../components/TextInput';
 import Select from '../../components/Select';
@@ -73,6 +75,7 @@ const Questionnaire = () => {
 		ipAddress_2,
 		cidr_1,
 		cidr_2,
+		gatewayLocation,
 		dnsP,
 		dnsS,
 		tpLink,
@@ -84,12 +87,13 @@ const Questionnaire = () => {
 	const handleIP = () => {
 		const data = {
 			circuitType,
-			...(cidr_1 && { slash1: cidr_1 }),
 			ipAddress1: ipAddress_1,
+			gatewayLocation,
+			...(cidr_1 && { slash1: cidr_1 }),
 			...(dnsP && { dnsP }),
 			...(dnsS && { dnsS }),
-			...(cidr_2 && { slash2: cidr_2 }),
 			...(ipAddress_2 && { ipAddress2: ipAddress_2 }),
+			...(cidr_2 && { slash2: cidr_2 }),
 		};
 
 		dispatch(setIPTemplate(processIPs(data)));
@@ -121,6 +125,7 @@ const Questionnaire = () => {
 			ip2: setIPAddress2,
 			cidr1: setCidr1,
 			cidr2: setCidr2,
+			gwayLoc: setGatewayLocation,
 			dns1: setDNSp,
 			dns2: setDNSs,
 			tp: setTPLink,
@@ -141,6 +146,7 @@ const Questionnaire = () => {
 		// 	measurement,
 		// 	ipAddress_1,
 		// 	cidr_1,
+		//	gatewayLocation,
 		// 	clientName,
 		// 	address_1,
 		// 	city,
@@ -165,7 +171,7 @@ const Questionnaire = () => {
 		// }
 
 		ipAddress_1 && handleIP();
-		navigate('/config-result');
+		// navigate('/config-result');
 	};
 
 	const handleTimeZone = useCallback(() => {
@@ -321,6 +327,15 @@ const Questionnaire = () => {
 								/>
 							</div>
 						)}
+					</section>
+					<section>
+						<RadioGroup
+							row
+							label='Gateway Location'
+							value={gatewayLocation}
+							onChange={(e) => handleChange('gwayLoc', e.target.value)}
+							options={gwayLocOptions}
+						/>
 					</section>
 					<section>
 						<RadioGroup

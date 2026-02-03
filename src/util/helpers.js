@@ -1,6 +1,14 @@
 export const processIPs = (data) => {
-	const { circuitType, slash1, ipAddress1, dnsP, dnsS, slash2, ipAddress2 } =
-		data;
+	const {
+		circuitType,
+		slash1,
+		ipAddress1,
+		dnsP,
+		dnsS,
+		slash2,
+		ipAddress2,
+		gatewayLocation,
+	} = data;
 
 	const maskMap = {
 		'/30': '255.255.255.252 /30',
@@ -37,13 +45,26 @@ export const processIPs = (data) => {
 		const { base, last } = parseIP(ipAddress1);
 		const hosts = usableHosts(slash1);
 
-		const router = `${base}${last + 1}`;
-		const available = buildRange(base, last + 2, last + hosts - 1);
-		const gateway = `${base}${last + hosts}`;
+		const firstUsable = last + 1;
+		const lastUsable = last + hosts;
+
+		const verveRouter =
+			gatewayLocation === 'beg'
+				? `${base}${firstUsable + 1}`
+				: `${base}${firstUsable}`;
+
+		const available =
+			gatewayLocation === 'beg'
+				? buildRange(base, firstUsable + 2, lastUsable)
+				: buildRange(base, firstUsable + 1, lastUsable - 1);
+		const gateway =
+			gatewayLocation === 'beg'
+				? `${base}${firstUsable}`
+				: `${base}${lastUsable}`;
 
 		return {
 			network: ipAddress1,
-			verveRouter: router,
+			verveRouter,
 			available,
 			subnetMask: maskMap[slash1],
 			gateway,
@@ -57,6 +78,18 @@ export const processIPs = (data) => {
 		const lan = parseIP(ipAddress2);
 		const lanHosts = usableHosts(slash2);
 
+		const firstUsable = lan.last + 1;
+		const lastUsable = lan.last + lanHosts;
+
+		const clientGateway =
+			gatewayLocation === 'beg'
+				? `${lan.base}${firstUsable}`
+				: `${lan.base}${lastUsable}`;
+		const available =
+			gatewayLocation === 'beg'
+				? buildRange(lan.base, firstUsable + 1, lastUsable)
+				: buildRange(lan.base, firstUsable, lastUsable - 1);
+
 		return {
 			wanNetwork: ipAddress1,
 			coreVerveGateway: `${wan.base}${wan.last + 1}`,
@@ -64,8 +97,8 @@ export const processIPs = (data) => {
 			wanMask: maskMap[slash1] || '255.255.255.252 /30',
 
 			lanNetwork: ipAddress2,
-			clientGateway: `${lan.base}${lan.last + 1}`,
-			available: buildRange(lan.base, lan.last + 2, lan.last + lanHosts),
+			clientGateway,
+			available,
 			lanMask: maskMap[slash2],
 
 			dnsP: '208.67.222.222',

@@ -346,3 +346,14 @@ export const cidrOptions = [
 		value: '/16',
 	},
 ];
+
+export const gwayLocOptions = [
+	{
+		label: 'Beginning',
+		value: 'beg',
+	},
+	{
+		label: 'End',
+		value: 'end',
+	},
+];
