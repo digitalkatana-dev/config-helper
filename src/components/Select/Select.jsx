@@ -22,11 +22,11 @@ const Select = ({
 				value={value}
 				onChange={onChange}
 			>
-				<option className='label' value=''>
+				<option className={`label ${theme === 'dark' ? theme : ''}`} value=''>
 					{label}
 				</option>
 				{options?.map((option, idx) => (
-					<option key={idx} value={option?.value}>
+					<option className='options' key={idx} value={option?.value}>
 						{option?.label}
 					</option>
 				))}
