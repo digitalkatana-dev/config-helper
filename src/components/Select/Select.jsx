@@ -22,7 +22,11 @@ const Select = ({
 				value={value}
 				onChange={onChange}
 			>
-				<option className={`label ${theme === 'dark' ? theme : ''}`} value=''>
+				<option
+					selected
+					className={`label ${theme === 'dark' ? theme : ''}`}
+					value=''
+				>
 					{label}
 				</option>
 				{options?.map((option, idx) => (

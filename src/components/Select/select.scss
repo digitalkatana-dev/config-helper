@@ -11,15 +11,19 @@
 	background-color: transparent;
 	color: var(--txt-primary);
 
+	option {
+		background-color: var(--paper-background);
+	}
+
+	.options {
+		color: var(--txt-primary);
+	}
+
 	&:focus {
 		outline: none;
 	}
 
-	.label {
-		color: grey;
-	}
-
-	option {
-		background-color: var(--paper-background);
+	&:has(option:checked[value='']) {
+		color: rgb(117, 117, 117) !important;
 	}
 }
