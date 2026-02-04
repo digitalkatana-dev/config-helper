@@ -13,11 +13,19 @@ const RadioGroup = ({ row, label, name, value, onChange, options }) => {
 	const { theme } = useSelector((state) => state.app);
 
 	return (
-		<FormControl>
-			<FormLabel className={`radio-group ${theme === 'dark' ? theme : ''}`}>
+		<FormControl className={`radio-group ${theme === 'dark' ? theme : ''}`}>
+			<FormLabel
+				className={`radio-group-label ${theme === 'dark' ? theme : ''}`}
+			>
 				{label}
 			</FormLabel>
-			<MuiRadioGroup row={row} name={name} value={value} onChange={onChange}>
+			<MuiRadioGroup
+				className={`radio-btns ${theme === 'dark' ? theme : ''}`}
+				row={row}
+				name={name}
+				value={value}
+				onChange={onChange}
+			>
 				{options?.map((option, idx) => (
 					<FormControlLabel
 						key={idx}

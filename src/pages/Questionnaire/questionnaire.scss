@@ -1,7 +1,9 @@
 .q-container {
-	height: calc(100vh - 64px);
+	min-height: calc(100vh - 64px);
 	display: flex;
 	flex-direction: column;
+	padding-top: 25px;
+	padding-bottom: 25px;
 
 	.MuiPaper-root {
 		width: 50%;

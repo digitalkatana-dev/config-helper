@@ -44,6 +44,15 @@ const initialState = appAdapter.getInitialState({
 	ipAddress_2: '',
 	cidr_1: '',
 	cidr_2: '',
+	verveRouter: '',
+	available: '',
+	subnetMask: '',
+	gateway: '',
+	coreVerveGateway: '',
+	verveRouterWan: '',
+	wanMask: '',
+	clientGateway: '',
+	lanMask: '',
 	gatewayLocation: 'beg',
 	dnsP: '',
 	dnsS: '',
@@ -127,6 +136,33 @@ export const appSlice = createSlice({
 		setCidr2: (state, action) => {
 			state.cidr_2 = action.payload;
 		},
+		setVerveRouter: (state, action) => {
+			state.verveRouter = action.payload;
+		},
+		setAvailable: (state, action) => {
+			state.available = action.payload;
+		},
+		setSubnetMask: (state, action) => {
+			state.subnetMask = action.payload;
+		},
+		setGateway: (state, action) => {
+			state.gateway = action.payload;
+		},
+		setCoreVerveGateway: (state, action) => {
+			state.coreVerveGateway = action.payload;
+		},
+		setVerveRouterWan: (state, action) => {
+			state.verveRouterWan = action.payload;
+		},
+		setWanMask: (state, action) => {
+			state.wanMask = action.payload;
+		},
+		setClientGateway: (state, action) => {
+			state.clientGateway = action.payload;
+		},
+		setLanMask: (state, action) => {
+			state.lanMask = action.payload;
+		},
 		setGatewayLocation: (state, action) => {
 			state.gatewayLocation = action.payload;
 		},
@@ -167,6 +203,15 @@ export const appSlice = createSlice({
 			state.ipAddress_2 = '';
 			state.cidr_1 = '';
 			state.cidr_2 = '';
+			state.verveRouter = '';
+			state.available = '';
+			state.subnetMask = '';
+			state.gateway = '';
+			state.coreVerveGateway = '';
+			state.verveRouterWan = '';
+			state.wanMask = '';
+			state.clientGateway = '';
+			state.lanMask = '';
 			state.gatewayLocation = 'beg';
 			state.dnsP = '';
 			state.dnsS = '';
@@ -220,6 +265,15 @@ export const {
 	setIPAddress2,
 	setCidr1,
 	setCidr2,
+	setVerveRouter,
+	setAvailable,
+	setSubnetMask,
+	setGateway,
+	setCoreVerveGateway,
+	setVerveRouterWan,
+	setWanMask,
+	setClientGateway,
+	setLanMask,
 	setGatewayLocation,
 	setDNSp,
 	setDNSs,

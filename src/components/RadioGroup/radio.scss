@@ -1,3 +1,5 @@
 .radio-group {
-	color: var(--txt-primary);
+	.radio-group-label {
+		color: var(--txt-primary) !important;
+	}
 }

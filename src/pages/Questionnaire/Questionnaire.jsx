@@ -25,6 +25,15 @@ import {
 	setIPAddress2,
 	setCidr1,
 	setCidr2,
+	setVerveRouter,
+	setAvailable,
+	setSubnetMask,
+	setGateway,
+	setCoreVerveGateway,
+	setVerveRouterWan,
+	setWanMask,
+	setClientGateway,
+	setLanMask,
 	setGatewayLocation,
 	setDNSp,
 	setDNSs,
@@ -60,7 +69,6 @@ const Questionnaire = () => {
 		city,
 		state,
 		zipCode,
-		timeZone,
 		carrier,
 		handoffType,
 		symmetrical,
@@ -75,6 +83,15 @@ const Questionnaire = () => {
 		ipAddress_2,
 		cidr_1,
 		cidr_2,
+		verveRouter,
+		available,
+		subnetMask,
+		gateway,
+		coreVerveGateway,
+		verveRouterWan,
+		wanMask,
+		clientGateway,
+		lanMask,
 		gatewayLocation,
 		dnsP,
 		dnsS,
@@ -125,6 +142,16 @@ const Questionnaire = () => {
 			ip2: setIPAddress2,
 			cidr1: setCidr1,
 			cidr2: setCidr2,
+
+			vrvRtr: setVerveRouter,
+			avail: setAvailable,
+			sub: setSubnetMask,
+			gate: setGateway,
+			vrvGtwy: setCoreVerveGateway,
+			vrvRtrW: setVerveRouterWan,
+			wanM: setWanMask,
+			cgtwy: setClientGateway,
+			lanM: setLanMask,
 			gwayLoc: setGatewayLocation,
 			dns1: setDNSp,
 			dns2: setDNSs,
@@ -138,40 +165,97 @@ const Questionnaire = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		// const data = {
-		// 	circuitType,
-		// 	carrier,
-		// 	symmetrical,
-		// 	speedDn,
-		// 	measurement,
-		// 	ipAddress_1,
-		// 	cidr_1,
-		//	gatewayLocation,
-		// 	clientName,
-		// 	address_1,
-		// 	city,
-		// 	state,
-		// 	zipCode,
-		// 	entryType,
-		// 	timeZone,
-		// 	isTagged,
-		// 	...(speedUp && { speedUp }),
-		// 	...(dnsP && { dnsP }),
-		// 	...(dnsS && { dnsS }),
-		// 	...(ipAddress_2 && { ipAddress_2 }),
-		// 	...(cidr_2 && { cidr_2 }),
-		// 	...(vlanId && { vlanId }),
-		// };
+		if (entryType === 'auto') {
+			// const data = {
+			// 	circuitType,
+			// 	carrier,
+			// 	symmetrical,
+			// 	speedDn,
+			// 	measurement,
+			// 	ipAddress_1,
+			// 	cidr_1,
+			//	gatewayLocation,
+			// 	clientName,
+			// 	address_1,
+			// 	city,
+			// 	state,
+			// 	zipCode,
+			// 	entryType,
+			// 	timeZone,
+			// 	isTagged,
+			// 	...(speedUp && { speedUp }),
+			// 	...(dnsP && { dnsP }),
+			// 	...(dnsS && { dnsS }),
+			// 	...(ipAddress_2 && { ipAddress_2 }),
+			// 	...(cidr_2 && { cidr_2 }),
+			// 	...(vlanId && { vlanId }),
+			// };
 
-		// const { valid, errors } = validateConfigData(data);
+			// const { valid, errors } = validateConfigData(data);
 
-		// if (!valid) {
-		// 	dispatch(setErrors(errors));
-		// 	return;
-		// }
+			// if (!valid) {
+			// 	dispatch(setErrors(errors));
+			// 	return;
+			// }
 
-		ipAddress_1 && handleIP();
+			ipAddress_1 && handleIP();
+		} else if (entryType === 'manual') {
+			let data;
+
+			if (circuitType === 'dia') {
+				data = {
+					network: ipAddress_1,
+					verveRouter,
+					available,
+					subnetMask: `${subnetMask} ${cidr_1}`,
+					gateway,
+					dnsP,
+					dnsS,
+				};
+			} else if (circuitType === 'nni') {
+				data = {
+					wanNetwork: ipAddress_1,
+					coreVerveGateway,
+					verveRouterWan,
+					wanMask: `${wanMask} ${cidr_1}`,
+					lanNetwork: ipAddress_2,
+					clientGateway,
+					available,
+					lanMask: `${lanMask} ${cidr_2}`,
+					dnsP,
+					dnsS,
+				};
+			}
+
+			dispatch(setIPTemplate(data));
+		}
 		navigate('/config-result');
+	};
+
+	const DNSInputDisplay = () => {
+		if (
+			circuitType === 'dia' ||
+			(circuitType === 'nni' && entryType === 'manual')
+		) {
+			return (
+				<div className='q-row'>
+					<TextInput
+						placeholder='Primary DNS'
+						value={dnsP}
+						onFocus={handleFocus}
+						onChange={(e) => handleChange('dns1', e.target.value)}
+						error={appErrors?.dnsP}
+					/>
+					<TextInput
+						placeholder='Secondary DNS'
+						value={dnsS}
+						onFocus={handleFocus}
+						onChange={(e) => handleChange('dns2', e.target.value)}
+						error={appErrors?.dnsS}
+					/>
+				</div>
+			);
+		}
 	};
 
 	const handleTimeZone = useCallback(() => {
@@ -194,6 +278,14 @@ const Questionnaire = () => {
 							value={circuitType}
 							onChange={(e) => handleChange('circuit', e.target.value)}
 							error={appErrors?.circuitType}
+						/>
+						<Select
+							fullWidth
+							label='Entry Type'
+							options={entryTypes}
+							value={entryType}
+							onChange={(e) => handleChange('entry', e.target.value)}
+							error={appErrors?.entryType}
 						/>
 						<div className='q-row'>
 							<div className='txt'>
@@ -290,6 +382,28 @@ const Questionnaire = () => {
 								error={appErrors?.cidr_1}
 							/>
 						</div>
+						{circuitType === 'nni' && entryType === 'manual' && (
+							<>
+								<TextInput
+									placeholder='Core/Verve Gateway'
+									value={coreVerveGateway}
+									onFocus={handleFocus}
+									onChange={(e) => handleChange('vrvGtwy', e.target.value)}
+								/>
+								<TextInput
+									placeholder='Verve Router Wan'
+									value={verveRouterWan}
+									onFocus={handleFocus}
+									onChange={(e) => handleChange('vrvRtrW', e.target.value)}
+								/>
+								<TextInput
+									placeholder='Subnet Mask'
+									value={wanMask}
+									onFocus={handleFocus}
+									onChange={(e) => handleChange('wanM', e.target.value)}
+								/>
+							</>
+						)}
 						{circuitType === 'nni' && (
 							<div className='q-row'>
 								<TextInput
@@ -309,34 +423,67 @@ const Questionnaire = () => {
 								/>
 							</div>
 						)}
-						{circuitType === 'dia' && (
-							<div className='q-row'>
-								<TextInput
-									placeholder='Primary DNS'
-									value={dnsP}
-									onFocus={handleFocus}
-									onChange={(e) => handleChange('dns1', e.target.value)}
-									error={appErrors?.dnsP}
-								/>
-								<TextInput
-									placeholder='Secondary DNS'
-									value={dnsS}
-									onFocus={handleFocus}
-									onChange={(e) => handleChange('dns2', e.target.value)}
-									error={appErrors?.dnsS}
-								/>
-							</div>
+						{circuitType === 'dia' && entryType === 'manual' && (
+							<TextInput
+								placeholder='Verve Router'
+								value={verveRouter}
+								onFocus={handleFocus}
+								onChange={(e) => handleChange('vrvRtr', e.target.value)}
+							/>
 						)}
+						{circuitType === 'nni' && entryType === 'manual' && (
+							<TextInput
+								placeholder='Verve Router Lan/Client Gateway'
+								value={clientGateway}
+								onFocus={handleFocus}
+								onChange={(e) => handleChange('cgtwy', e.target.value)}
+							/>
+						)}
+						{circuitType !== '' && entryType === 'manual' && (
+							<TextInput
+								placeholder='Available IPs'
+								value={available}
+								onFocus={handleFocus}
+								onChange={(e) => handleChange('avail', e.target.value)}
+							/>
+						)}
+						{circuitType === 'dia' && entryType === 'manual' && (
+							<TextInput
+								placeholder='Subnet Mask'
+								value={subnetMask}
+								onFocus={handleFocus}
+								onChange={(e) => handleChange('sub', e.target.value)}
+							/>
+						)}
+						{circuitType === 'dia' && entryType === 'manual' && (
+							<TextInput
+								placeholder='Gateway'
+								value={gateway}
+								onFocus={handleFocus}
+								onChange={(e) => handleChange('gate', e.target.value)}
+							/>
+						)}
+						{circuitType === 'nni' && entryType === 'manual' && (
+							<TextInput
+								placeholder='Subnet Mask'
+								value={lanMask}
+								onFocus={handleFocus}
+								onChange={(e) => handleChange('lanM', e.target.value)}
+							/>
+						)}
+						{DNSInputDisplay()}
 					</section>
-					<section>
-						<RadioGroup
-							row
-							label='Gateway Location'
-							value={gatewayLocation}
-							onChange={(e) => handleChange('gwayLoc', e.target.value)}
-							options={gwayLocOptions}
-						/>
-					</section>
+					{entryType === 'auto' && (
+						<section>
+							<RadioGroup
+								row
+								label='Gateway Location'
+								value={gatewayLocation}
+								onChange={(e) => handleChange('gwayLoc', e.target.value)}
+								options={gwayLocOptions}
+							/>
+						</section>
+					)}
 					<section>
 						<RadioGroup
 							row
@@ -394,14 +541,6 @@ const Questionnaire = () => {
 							</div>
 						</div>
 					</section>
-					<Select
-						fullWidth
-						label='Entry Type'
-						options={entryTypes}
-						value={entryType}
-						onChange={(e) => handleChange('entry', e.target.value)}
-						error={appErrors?.entryType}
-					/>
 					<Button type='submit'>Submit</Button>
 				</form>
 			</Paper>
